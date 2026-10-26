@@ -1,0 +1,56 @@
+{
+  "missions": [
+    {
+      "id": "mision_1",
+      "name": "Un sitio donde dormir",
+      "node": "nodo_1",
+      "objective": "Hablar con O-Ren y conseguir alojamiento.",
+      "steps": [
+        "Entrar en la posada",
+        "Hablar con O-Ren",
+        "Aceptar pagar, hacer un favor o mencionar a Yasuke"
+      ],
+      "rewards": {
+        "lodging": true
+      },
+      "consequences": {
+        "pay": {
+          "riqueza": -10
+        },
+        "favor": {
+          "quest": "favor_oren"
+        },
+        "yasuke": {
+          "riqueza": 5,
+          "oren_trust": -10
+        }
+      }
+    },
+    {
+      "id": "mision_2",
+      "name": "El pozo envenenado",
+      "node": "nodo_2",
+      "objective": "Investigar el pozo y decidir a quién informar.",
+      "steps": [
+        "Ir al pozo",
+        "Examinar el agua",
+        "Hablar con un aldeano",
+        "Informar al clan o a los aldeanos"
+      ],
+      "rewards": {
+        "monedas": 100,
+        "information": true
+      },
+      "consequences": {
+        "report_clan": {
+          "orden": 10,
+          "memoria": -10
+        },
+        "report_village": {
+          "memoria": 10,
+          "orden": -10
+        }
+      }
+    }
+  ]
+}
