@@ -86,6 +86,8 @@ jobs:
           ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
         run: |
           mkdir -p builds
+          test -s "$HOME/.android/debug.keystore"
+          sed -i "s|^keystore/debug=.*|keystore/debug=\\"$HOME/.android/debug.keystore\\"|" game/export_presets.cfg
           GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/.android/debug.keystore" \
           GODOT_ANDROID_KEYSTORE_DEBUG_USER="androiddebugkey" \
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android" \
