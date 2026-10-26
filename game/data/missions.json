@@ -8,7 +8,7 @@
       "steps": [
         "Entrar en la posada",
         "Hablar con O-Ren",
-        "Aceptar pagar, hacer un favor o mencionar a Yasuke"
+        "Elegir pago, favor o mencionar a Yasuke"
       ],
       "rewards": {
         "lodging": true
@@ -32,7 +32,6 @@
       "node": "nodo_2",
       "objective": "Investigar el pozo y decidir a quién informar.",
       "steps": [
-        "Ir al pozo",
         "Examinar el agua",
         "Hablar con un aldeano",
         "Informar al clan o a los aldeanos"
@@ -49,6 +48,138 @@
         "report_village": {
           "memoria": 10,
           "orden": -10
+        }
+      }
+    },
+    {
+      "id": "mision_3",
+      "name": "La carta de Yasuke",
+      "node": "nodo_3",
+      "objective": "Entregar o abrir la carta sellada.",
+      "steps": [
+        "Recibir la carta",
+        "Ir al santuario",
+        "Decidir si abrirla"
+      ],
+      "rewards": {
+        "monedas": 200,
+        "sanctuary_access": true
+      },
+      "consequences": {
+        "respect_secret": {
+          "fe": 5,
+          "riqueza": -5
+        },
+        "open_letter": {
+          "riqueza": 5,
+          "fe": -5
+        }
+      }
+    },
+    {
+      "id": "mision_4",
+      "name": "El oni del monte Yama",
+      "node": "nodo_4",
+      "objective": "Resolver el encuentro con el oni.",
+      "steps": [
+        "Subir al monte",
+        "Encontrar al oni",
+        "Combatir, escuchar o ayudarlo a descansar"
+      ],
+      "rewards": {
+        "monedas": 300,
+        "item": "variable"
+      },
+      "consequences": {
+        "kill": {
+          "orden": 15,
+          "honor": -10
+        },
+        "listen": {
+          "fe": 10,
+          "orden": -10
+        },
+        "help_rest": {
+          "fe": 15,
+          "honor": 10,
+          "orden": -5
+        }
+      }
+    },
+    {
+      "id": "mision_5",
+      "name": "Los muertos de Nakamura",
+      "node": "nodo_5",
+      "objective": "Explorar las ruinas y hablar con el yūrei del niño.",
+      "steps": [
+        "Recibir la pista de Hana",
+        "Viajar a las ruinas",
+        "Hablar o huir"
+      ],
+      "rewards": {
+        "flashback": true
+      },
+      "consequences": {
+        "speak": {
+          "honor": 10,
+          "fe": 10
+        },
+        "flee": {
+          "honor": -10
+        }
+      }
+    },
+    {
+      "id": "mision_6",
+      "name": "El monje en el camino",
+      "node": "nodo_6",
+      "objective": "Escuchar la confesión de Sōhei y decidir su destino.",
+      "steps": [
+        "Encontrar a Sōhei",
+        "Escuchar su confesión",
+        "Perdonar, matar o dejarlo testificar"
+      ],
+      "rewards": {
+        "variable": true
+      },
+      "consequences": {
+        "forgive": {
+          "fe": 10,
+          "honor": -5
+        },
+        "kill": {
+          "orden": 10,
+          "fe": -10
+        },
+        "testify": {
+          "memoria": 15
+        }
+      }
+    },
+    {
+      "id": "mision_7",
+      "name": "El juicio",
+      "node": "nodo_7",
+      "objective": "Enfrentarse a Hōjō y decidir el futuro de Kanegawa.",
+      "steps": [
+        "Recibir la invitación",
+        "Entrar al castillo",
+        "Aceptar, combatir o exponer públicamente"
+      ],
+      "rewards": {
+        "ending": true
+      },
+      "consequences": {
+        "accept": {
+          "orden": 15,
+          "honor": -15
+        },
+        "fight": {
+          "honor": 10
+        },
+        "expose": {
+          "memoria": 15,
+          "fe": 10
         }
       }
     }
