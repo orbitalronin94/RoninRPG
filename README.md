@@ -11,12 +11,21 @@ RPG narrativo 2D para Godot 4, ambientado en Kanegawa en 1573. El proyecto conti
 
 **Importante:** la ampliación de datos no significa que todas las mecánicas estén ya implementadas en la interfaz jugable. El combate táctico, los sistemas de clima/crafteo, los seis finales completos, los assets originales de sprites/sonido y el diálogo LLM en runtime siguen siendo trabajo pendiente. El workflow está configurado, pero el APK solo se considera entregado cuando una ejecución de Actions termina correctamente y el archivo se verifica en un dispositivo/emulador.
 
+## Combate arcade: Ronin Duel
+La escena `game/scenes/combat.tscn` añade duelos 2D contra CPU con estética samurái estilizada, barras de vida y KI, ataques normales, Corte del Sauce, bloqueo, salto, dash, chispas de impacto, combo y persistencia de victorias/Honor. El escenario y los luchadores se dibujan por código para evitar dependencias de recursos externos.
+
+- Desde la aldea: pulsa **F** o toca **DUELO** para entrar en combate cuando el diálogo esté cerrado.
+- En el duelo: **J/Z** corte, **K/X** especial (25 KI), **L** bloquear, **W/↑/Espacio** saltar, **Shift** dash, **A/D** o flechas moverse, **Esc** volver.
+- En móvil: usa los controles táctiles de la parte inferior. Tras ganar, el contador de duelos y Honor se guardan en `user://decisions.json`.
+
+Es un prototipo de combate jugable, no todavía una animación de sprites dibujados a mano comparable a un juego comercial; los gráficos son vectoriales y el duelo debe probarse en dispositivo antes de considerar el APK verificado.
+
 ## Ejecutar en escritorio
 1. Instala Godot 4.2.2 o una versión compatible.
 2. Abre `game/project.godot`.
 3. Ejecuta con F6/F5 desde el editor.
 
-Controles iniciales: WASD o flechas para moverse; Espacio/Enter para avanzar diálogo; E para interactuar.
+Controles de aventura: WASD o flechas para moverse; Espacio/Enter para avanzar diálogo; E para interactuar.
 
 ## Validar datos
 Con Python 3:
