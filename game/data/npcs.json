@@ -53,6 +53,78 @@
       "desire": "Encontrar paz mediante penitencia.",
       "secret": "Dio la señal para iniciar la masacre.",
       "dialogue_style": "Pocas palabras, pausas largas, no evita la culpa."
+    },
+    {
+      "id": "shiro",
+      "name": "Shiro",
+      "age": 16,
+      "faction": "yasuke_net",
+      "desire": "Conseguir suficiente dinero para dejar de ser mensajero.",
+      "secret": "Es el niño salvado por Kagetora y hermano de Kiyohime.",
+      "dialogue_style": "Rápido, curioso, coloquial; se queda callado cuando algo le duele."
+    },
+    {
+      "id": "renji",
+      "name": "Capitán Renji",
+      "age": 45,
+      "faction": "hojo",
+      "desire": "Servir a Hōjō hasta el final.",
+      "secret": "Sabía que Nakamura era una masacre y obedeció.",
+      "dialogue_style": "Marcial, directo, informa en lugar de discutir."
+    },
+    {
+      "id": "taro",
+      "name": "Tarō",
+      "age": 38,
+      "faction": "smiths",
+      "desire": "Forjar la mejor espada de Kanegawa.",
+      "secret": "Su padre conocía el comercio ilegal de armas.",
+      "dialogue_style": "Técnico, parco, se entusiasma hablando de acero."
+    },
+    {
+      "id": "sayo",
+      "name": "Miko Sayo",
+      "age": 19,
+      "faction": "inari",
+      "desire": "Servir a Kiyohime y al santuario.",
+      "secret": "Siente afecto por Shiro, aunque ninguno lo reconoce.",
+      "dialogue_style": "Alegre, parlanchina, cambia de tema con facilidad."
+    },
+    {
+      "id": "blind_hermit",
+      "name": "El Ermitaño Ciego",
+      "age": null,
+      "faction": "inari",
+      "desire": "Proteger el bosque de bambú.",
+      "secret": "Fue samurái Hōjō y conoce la verdad que Sōhei le contó.",
+      "dialogue_style": "Enigmático, responde con preguntas y acertijos."
+    },
+    {
+      "id": "elder_hana",
+      "name": "Anciana Hana",
+      "age": 78,
+      "faction": "nakamura",
+      "desire": "Que los nombres de los muertos no se olviden.",
+      "secret": "Sabe que un niño sobrevivió, pero no conoce su identidad.",
+      "dialogue_style": "Seca, directa, enumera nombres sin adornos."
+    },
+    {
+      "id": "chief_kuma",
+      "name": "Jefe Kuma",
+      "age": 50,
+      "faction": "coal_workers",
+      "desire": "Proteger a los carboneros y conservar el acceso a las minas.",
+      "secret": "Conoce los derrumbes ocultados por el clan.",
+      "dialogue_style": "Práctico, áspero, habla del trabajo y del carbón."
+    },
+    {
+      "id": "fisher_jiro",
+      "name": "Pescador Jirō",
+      "age": 44,
+      "faction": "fisherfolk",
+      "desire": "Recuperar la pesca y proteger a su pueblo.",
+      "secret": "Ha visto el barco de contrabando de Yasuke encallado.",
+      "dialogue_style": "Conciso, marinero, desconfiado con los extraños."
     }
   ]
 }
