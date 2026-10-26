@@ -36,6 +36,11 @@ jobs:
       - name: Install Android SDK packages
         run: sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
+      - name: Create Android debug keystore
+        run: |
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
       - name: Download Godot 4.2.2 and export templates
         shell: bash
         run: |
