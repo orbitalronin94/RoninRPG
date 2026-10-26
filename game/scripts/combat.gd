@@ -13,6 +13,7 @@ var player_y := FLOOR_Y
 var player_vy := 0.0
 var player_hp := 100
 var player_ki := 50
+var enemy_ki := 50
 var enemy_x := ENEMY_START_X
 var enemy_hp := 100
 var player_state := "idle"
@@ -191,7 +192,7 @@ func _update_enemy(delta: float) -> void:
 		if enemy_hp < 32 and roll < 0.26:
 			enemy_state = "block"
 			enemy_state_timer = 0.55
-		elif player_ki >= 25 and roll > 0.73:
+		elif enemy_ki >= 25 and roll > 0.73:
 			_enemy_attack(true)
 		else:
 			_enemy_attack(false)
@@ -238,6 +239,8 @@ func _enemy_attack(special: bool) -> void:
 	if enemy_cooldown > 0.0:
 		return
 	enemy_special = special
+	if special:
+		enemy_ki = maxi(0, enemy_ki - 25)
 	enemy_state = "special" if special else "attack"
 	enemy_attack_timer = 0.36 if special else 0.27
 	enemy_cooldown = 0.86 if special else 0.68
@@ -261,6 +264,7 @@ func _resolve_player_hit() -> void:
 		enemy_special = false
 	enemy_hp = maxi(0, enemy_hp - damage)
 	player_ki = mini(100, player_ki + 8)
+	enemy_ki = mini(100, enemy_ki + 4)
 	combo_count += 1
 	combo_timer = 1.15
 	hitstop = 0.035
@@ -358,6 +362,7 @@ func _reset_round() -> void:
 	player_vy = 0.0
 	player_hp = 100
 	player_ki = 50
+	enemy_ki = 50
 	enemy_x = ENEMY_START_X
 	enemy_hp = 100
 	player_state = "idle"
@@ -533,8 +538,8 @@ func _draw_hud() -> void:
 	draw_string(ThemeDB.fallback_font, Vector2(34, 83), "HP %d / 100" % player_hp, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#f3dfc4"))
 	draw_string(ThemeDB.fallback_font, Vector2(926, 83), "HP %d / 100" % enemy_hp, HORIZONTAL_ALIGNMENT_RIGHT, -1, 13, Color("#f3dfc4"))
 	_draw_bar(Rect2(34, 91, 220, 8), player_ki, Color("#48c7dc"), Color("#203747"), 100.0)
-	draw_string(ThemeDB.fallback_font, Vector2(480, 78), "%02d" % int(ceil(round_time)), HORIZONTAL_ALIGNMENT_CENTER, 0, 28, Color("#ffe7ae"))
-	draw_string(ThemeDB.fallback_font, Vector2(480, 101), "RONIN DUEL", HORIZONTAL_ALIGNMENT_CENTER, 0, 10, Color("#c8b9a0"))
+	draw_string(ThemeDB.fallback_font, Vector2(430, 78), "%02d" % int(ceil(round_time)), HORIZONTAL_ALIGNMENT_CENTER, 100, 28, Color("#ffe7ae"))
+	draw_string(ThemeDB.fallback_font, Vector2(430, 101), "RONIN DUEL", HORIZONTAL_ALIGNMENT_CENTER, 100, 10, Color("#c8b9a0"))
 	if combo_count >= 2 and combo_timer > 0.0:
 		draw_string(ThemeDB.fallback_font, Vector2(305, 150), "%d HIT COMBO" % combo_count, HORIZONTAL_ALIGNMENT_CENTER, 350, 20, Color("#ffe49c"))
 	draw_rect(Rect2(18, 392, 924, 32), Color(0.02, 0.025, 0.04, 0.72))
@@ -569,10 +574,10 @@ func _draw_result() -> void:
 	draw_rect(Rect2(0, 0, 960, 540), Color(0.01, 0.015, 0.03, 0.72))
 	var headline := "VICTORIA" if result == "win" else ("DERROTA" if result == "loss" else "EMPATE")
 	var headline_color := Color("#ffe3a1") if result == "win" else Color("#f08c89")
-	draw_string(ThemeDB.fallback_font, Vector2(480, 228), headline, HORIZONTAL_ALIGNMENT_CENTER, 0, 48, headline_color)
+	draw_string(ThemeDB.fallback_font, Vector2(200, 228), headline, HORIZONTAL_ALIGNMENT_CENTER, 560, 48, headline_color)
 	draw_string(ThemeDB.fallback_font, Vector2(480, 268), status_line, HORIZONTAL_ALIGNMENT_CENTER, 760, 17, Color("#f7e7d0"))
 	draw_rect(Rect2(280, 405, 400, 74), Color("#733841"))
 	draw_rect(Rect2(284, 409, 392, 66), Color("#a94d4d"))
-	draw_string(ThemeDB.fallback_font, Vector2(480, 437), "OTRA RONDA", HORIZONTAL_ALIGNMENT_CENTER, 0, 18, Color("#fff0d7"))
-	draw_string(ThemeDB.fallback_font, Vector2(480, 461), "ENTER / toca aquí", HORIZONTAL_ALIGNMENT_CENTER, 0, 13, Color("#ffe0b3"))
+	draw_string(ThemeDB.fallback_font, Vector2(280, 437), "OTRA RONDA", HORIZONTAL_ALIGNMENT_CENTER, 400, 18, Color("#fff0d7"))
+	draw_string(ThemeDB.fallback_font, Vector2(280, 461), "ENTER / toca aquí", HORIZONTAL_ALIGNMENT_CENTER, 400, 13, Color("#ffe0b3"))
 	draw_string(ThemeDB.fallback_font, Vector2(926, 35), "ESC: VOLVER", HORIZONTAL_ALIGNMENT_RIGHT, -1, 12, Color("#ffe0b3"))
