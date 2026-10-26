@@ -15,6 +15,7 @@ var honor := 50
 var coins := 50
 var lodging_obtained := false
 var well_investigated := false
+var duel_wins := 0
 var story_node := 1
 var choice_mode := false
 var dialogue_open := true
@@ -47,7 +48,14 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch and event.pressed:
+		if Rect2(790, 12, 156, 64).has_point(event.position) and not dialogue_open and not choice_mode:
+			_start_combat()
+			return
 	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	if event.keycode == KEY_F and not dialogue_open and not choice_mode:
+		_start_combat()
 		return
 	if choice_mode:
 		if event.is_action("ui_accept") and dialogue_index < lines.size() - 1:
@@ -70,6 +78,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		queue_redraw()
 	elif event.keycode == KEY_E:
 		interact()
+
+func _start_combat() -> void:
+	get_tree().change_scene_to_file("res://scenes/combat.tscn")
 
 func _show_dialogue(new_lines: Array[String], choices := false) -> void:
 	lines = new_lines
@@ -125,6 +136,7 @@ func _save_progress() -> void:
 		"faction_reputation": faction_values,
 		"lodging_obtained": lodging_obtained,
 		"well_investigated": well_investigated,
+		"duel_wins": duel_wins,
 		"decisions": decisions
 	}
 	var file := FileAccess.open("user://decisions.json", FileAccess.WRITE)
@@ -147,6 +159,7 @@ func _load_progress() -> void:
 	story_node = clampi(int(str(parsed.get("current_node", "nodo_1")).trim_prefix("nodo_")), 1, 12)
 	lodging_obtained = bool(parsed.get("lodging_obtained", false))
 	well_investigated = bool(parsed.get("well_investigated", false))
+	duel_wins = maxi(0, int(parsed.get("duel_wins", 0)))
 	var saved_factions = parsed.get("faction_reputation", {})
 	if saved_factions is Dictionary:
 		for key in saved_factions:
@@ -240,12 +253,16 @@ func _draw() -> void:
 	draw_line(player_position + Vector2(8,8),player_position + Vector2(21,0),Color("#d8d8d0"),3)
 	# HUD
 	draw_rect(Rect2(14,12,420,96),Color(0.04,0.05,0.05,0.86))
+	draw_rect(Rect2(790,12,156,64),Color("#5b292d"))
+	draw_rect(Rect2(794,16,148,56),Color("#a64b42"))
+	draw_string(ThemeDB.fallback_font,Vector2(807,38),"DUELO [F]",HORIZONTAL_ALIGNMENT_LEFT,-1,16,Color("#fff0d4"))
+	draw_string(ThemeDB.fallback_font,Vector2(807,58),"Victorias: %d" % duel_wins,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("#ffe0a2"))
 	draw_string(ThemeDB.fallback_font,Vector2(28,35),"KAGETORA | HP %d | KI %d | NODO %d" % [hp,ki,story_node],HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("#f0e5ce"))
 	draw_string(ThemeDB.fallback_font,Vector2(28,61),"HONOR %d/100 · MONEDAS %d" % [honor,coins],HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("#e4c77b"))
 	draw_string(ThemeDB.fallback_font,Vector2(28,87),"ORDEN %d · MEMORIA %d · FE %d" % [faction_values["orden"],faction_values["memoria"],faction_values["fe"]],HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("#b9c6bd"))
 	draw_rect(Rect2(14,445,932,80),Color(0.04,0.05,0.05,0.9))
 	draw_string(ThemeDB.fallback_font,Vector2(30,470),status,HORIZONTAL_ALIGNMENT_LEFT,895,16,Color("#f0e5ce"))
-	draw_string(ThemeDB.fallback_font,Vector2(30,500),"WASD/Flechas: moverse · E: interactuar · Espacio/Enter: continuar",HORIZONTAL_ALIGNMENT_LEFT,895,14,Color("#b9c6bd"))
+	draw_string(ThemeDB.fallback_font,Vector2(30,500),"WASD/Flechas: moverse · E: interactuar · F: duelo · Espacio/Enter: continuar",HORIZONTAL_ALIGNMENT_LEFT,895,14,Color("#b9c6bd"))
 	if dialogue_open:
 		draw_rect(Rect2(24,335,912,98),Color(0.06,0.07,0.08,0.97))
 		draw_string(ThemeDB.fallback_font,Vector2(44,365),lines[clampi(dialogue_index,0,lines.size()-1)],HORIZONTAL_ALIGNMENT_LEFT,870,16,Color("#f0e5ce"))
