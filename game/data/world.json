@@ -1,0 +1,41 @@
+{
+  "id": "kanegawa_1573",
+  "name": "Provincia de Kanegawa",
+  "year": 1573,
+  "era": "Sengoku tardío",
+  "factions": [
+    {
+      "id": "hojo",
+      "name": "Clan Hōjō",
+      "resource": "orden",
+      "value": 70
+    },
+    {
+      "id": "yasuke_net",
+      "name": "Red de Yasuke",
+      "resource": "riqueza",
+      "value": 50
+    },
+    {
+      "id": "nakamura",
+      "name": "Aldeanos de Nakamura",
+      "resource": "memoria",
+      "value": 30
+    },
+    {
+      "id": "inari",
+      "name": "Santuario de Inari",
+      "resource": "fe",
+      "value": 40
+    }
+  ],
+  "hidden_truth": "Hōjō ordenó la masacre de Nakamura para ocultar su comercio ilegal de armas.",
+  "locations": [
+    "kanegawa_village",
+    "sauce_path",
+    "yama_mountain",
+    "nakamura_ruins",
+    "hojo_castle"
+  ],
+  "starting_node": "nodo_1"
+}
