@@ -36,6 +36,9 @@ var faction_values := {
 }
 var decisions: Array[String] = []
 
+func _ready() -> void:
+	_load_progress()
+
 func _process(delta: float) -> void:
 	if not dialogue_open:
 		player_position += Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down") * SPEED * delta
@@ -47,12 +50,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
 	if choice_mode:
-		if event.keycode == KEY_1:
+		if event.is_action("ui_accept") and dialogue_index < lines.size() - 1:
+			dialogue_index += 1
+		elif dialogue_index >= lines.size() - 1 and event.keycode == KEY_1:
 			_resolve_choice(1)
-		elif event.keycode == KEY_2:
+		elif dialogue_index >= lines.size() - 1 and event.keycode == KEY_2:
 			_resolve_choice(2)
-		elif event.keycode == KEY_3:
+		elif dialogue_index >= lines.size() - 1 and event.keycode == KEY_3:
 			_resolve_choice(3)
+		queue_redraw()
 		return
 	if event.is_action("ui_accept"):
 		if dialogue_open:
@@ -107,7 +113,50 @@ func _resolve_choice(choice: int) -> void:
 		else:
 			decisions.append("kiyohime:guardar_silencio")
 			status = "Kiyohime guarda silencio. Algunas verdades necesitan tiempo."
+	_save_progress()
 	queue_redraw()
+
+func _save_progress() -> void:
+	var state := {
+		"schema_version": 1,
+		"current_node": "nodo_%d" % story_node,
+		"honor": honor,
+		"coins": coins,
+		"faction_reputation": faction_values,
+		"lodging_obtained": lodging_obtained,
+		"well_investigated": well_investigated,
+		"decisions": decisions
+	}
+	var file := FileAccess.open("user://decisions.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(state, "\\t"))
+		file.close()
+
+func _load_progress() -> void:
+	if not FileAccess.file_exists("user://decisions.json"):
+		return
+	var file := FileAccess.open("user://decisions.json", FileAccess.READ)
+	if file == null:
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	file.close()
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return
+	honor = clampi(int(parsed.get("honor", honor)), 0, 100)
+	coins = maxi(0, int(parsed.get("coins", coins)))
+	story_node = clampi(int(str(parsed.get("current_node", "nodo_1")).trim_prefix("nodo_")), 1, 12)
+	lodging_obtained = bool(parsed.get("lodging_obtained", false))
+	well_investigated = bool(parsed.get("well_investigated", false))
+	var saved_factions = parsed.get("faction_reputation", {})
+	if saved_factions is Dictionary:
+		for key in saved_factions:
+			if faction_values.has(key):
+				faction_values[key] = clampi(int(saved_factions[key]), 0, 100)
+	var saved_decisions = parsed.get("decisions", [])
+	if saved_decisions is Array:
+		for item in saved_decisions:
+			decisions.append(str(item))
+	status = "Partida cargada. Nodo %d · Honor %d." % [story_node, honor]
 
 func _adjust_faction(key: String, amount: int) -> void:
 	faction_values[key] = clampi(int(faction_values.get(key, 0)) + amount, 0, 100)
@@ -201,7 +250,7 @@ func _draw() -> void:
 		else:
 			draw_string(ThemeDB.fallback_font,Vector2(44,405),"Espacio / Enter para continuar",HORIZONTAL_ALIGNMENT_LEFT,870,14,Color("#e4c77b"))
 
-func _draw_person(pos: Vector2, robe: Color, accent := Color("#49362d")) -> void:
+func _draw_person(pos: Vector2, robe: Color, accent: Color = Color(0.28, 0.22, 0.18)) -> void:
 	draw_circle(pos, 10, Color("#c5a083"))
 	draw_rect(Rect2(pos + Vector2(-11, 10), Vector2(22, 29)), robe)
 	draw_rect(Rect2(pos + Vector2(-11, 29), Vector2(22, 5)), accent)
