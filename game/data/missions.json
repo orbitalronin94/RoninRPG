@@ -158,28 +158,28 @@
     },
     {
       "id": "mision_7",
-      "name": "El juicio",
+      "name": "La verdad de Shiro",
       "node": "nodo_7",
-      "objective": "Enfrentarse a Hōjō y decidir el futuro de Kanegawa.",
+      "objective": "Investigar el colgante de Shiro y decidir cómo revelar su origen.",
       "steps": [
-        "Recibir la invitación",
-        "Entrar al castillo",
-        "Aceptar, combatir o exponer públicamente"
+        "Hablar con Sayo",
+        "Examinar el colgante",
+        "Contárselo a Kiyohime, a Shiro o guardar silencio"
       ],
       "rewards": {
-        "ending": true
+        "shiro_truth": true
       },
       "consequences": {
-        "accept": {
-          "orden": 15,
-          "honor": -15
+        "tell_kiyohime": {
+          "fe": 10,
+          "memoria": 10
         },
-        "fight": {
-          "honor": 10
+        "tell_shiro": {
+          "honor": 5,
+          "shiro_trust": 15
         },
-        "expose": {
-          "memoria": 15,
-          "fe": 10
+        "keep_silent": {
+          "honor": -5
         }
       }
     },
