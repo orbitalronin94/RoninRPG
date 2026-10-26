@@ -57,6 +57,15 @@ jobs:
           echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
           "$GODOT_BIN" --version
 
+      - name: Validate narrative data
+        run: |
+          python tools/validate_json.py
+          python tools/agents/world_agent.py
+          python tools/agents/npc_agent.py
+          python tools/agents/story_agent.py
+          python tools/agents/mission_agent.py
+          python tools/agents/scene_agent.py
+
       - name: Configure Godot Android SDK paths
         run: |
           mkdir -p "$HOME/.config/godot"
