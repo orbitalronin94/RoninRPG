@@ -157,6 +157,8 @@ func _load_progress() -> void:
 		for item in saved_decisions:
 			decisions.append(str(item))
 	status = "Partida cargada. Nodo %d · Honor %d." % [story_node, honor]
+	dialogue_open = false
+	choice_mode = false
 
 func _adjust_faction(key: String, amount: int) -> void:
 	faction_values[key] = clampi(int(faction_values.get(key, 0)) + amount, 0, 100)
@@ -171,6 +173,7 @@ func interact() -> void:
 		story_node = 2
 		decisions.append("oren:alojamiento_conseguido")
 		status = "Alojamiento conseguido. Honor +5. Investiga el pozo azul."
+		_save_progress()
 		_show_dialogue([
 			"O-Ren: La habitación es tuya por esta noche. No confundas necesidad con amistad.",
 			"Kagetora: No suelo confundirlas.",
@@ -180,6 +183,7 @@ func interact() -> void:
 		well_investigated = true
 		story_node = 2
 		status = "El agua tiene un brillo extraño. Decide a quién informar."
+		_save_progress()
 		_show_dialogue([
 			"Kagetora: El agua brilla. No es barro. Huele a las minas.",
 			"Aldeano: El clan desvió el río. Ahora el pozo nos devuelve veneno.",
