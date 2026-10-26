@@ -1,0 +1,58 @@
+{
+  "npcs": [
+    {
+      "id": "kagetora",
+      "name": "Kagetora",
+      "age": 34,
+      "desire": "Encontrar un lugar donde dejar de huir.",
+      "secret": "Participó en la masacre de Nakamura y salvó a un niño.",
+      "dialogue_style": "Frases cortas, reservado, seco."
+    },
+    {
+      "id": "oren",
+      "name": "O-Ren",
+      "age": 52,
+      "faction": "nakamura",
+      "desire": "Mantener viva la posada en memoria de su hijo.",
+      "secret": "Sabe que Kagetora sirvió al clan. Su hijo murió en la masacre.",
+      "moral_limit": "No traicionará a los aldeanos de Nakamura.",
+      "dialogue_style": "Directa, refranes populares, frases cortas."
+    },
+    {
+      "id": "yasuke",
+      "name": "Yasuke",
+      "age": 42,
+      "faction": "yasuke_net",
+      "desire": "Acumular riqueza para abandonar Kanegawa.",
+      "secret": "Vendió armas a Hōjō y conoce la verdad de la masacre.",
+      "dialogue_style": "Elocuente, irónico, calculador."
+    },
+    {
+      "id": "kiyohime",
+      "name": "Kiyohime",
+      "age": 26,
+      "faction": "inari",
+      "desire": "Purificar el santuario de Inari.",
+      "secret": "Es hermana del niño salvado por Kagetora, pero lo ignora.",
+      "dialogue_style": "Formal, serena, metáforas de naturaleza."
+    },
+    {
+      "id": "hojo_ujimasa",
+      "name": "Hōjō Ujimasa",
+      "age": 61,
+      "faction": "hojo",
+      "desire": "Preservar el orden de la provincia a cualquier precio.",
+      "secret": "Ordenó la masacre para ocultar el comercio ilegal de armas.",
+      "dialogue_style": "Formal, pausada, fría."
+    },
+    {
+      "id": "sohei",
+      "name": "Sōhei",
+      "age": 67,
+      "faction": "hojo",
+      "desire": "Encontrar paz mediante penitencia.",
+      "secret": "Dio la señal para iniciar la masacre.",
+      "dialogue_style": "Pocas palabras, pausas largas, no evita la culpa."
+    }
+  ]
+}
