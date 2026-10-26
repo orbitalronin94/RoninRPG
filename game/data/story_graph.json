@@ -77,12 +77,14 @@
         "mision_5"
       ],
       "next_nodes": [
-        "nodo_6"
+        "nodo_6",
+        "nodo_8",
+        "nodo_10"
       ]
     },
     {
       "id": "nodo_6",
-      "name": "La verdad del monje",
+      "name": "El monje en el camino",
       "entry_conditions": [
         "nakamura_resolved"
       ],
@@ -98,6 +100,73 @@
     },
     {
       "id": "nodo_7",
+      "name": "La verdad de Shiro",
+      "entry_conditions": [
+        "sohei_resolved"
+      ],
+      "exit_conditions": [
+        "shiro_truth_resolved"
+      ],
+      "missions": [
+        "mision_7"
+      ],
+      "next_nodes": [
+        "nodo_8",
+        "nodo_9",
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_8",
+      "name": "La costa de los contrabandistas",
+      "entry_conditions": [
+        "nakamura_resolved"
+      ],
+      "exit_conditions": [
+        "coast_resolved"
+      ],
+      "missions": [
+        "mision_8"
+      ],
+      "next_nodes": [
+        "nodo_9",
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_9",
+      "name": "El bosque de bambú",
+      "entry_conditions": [
+        "shiro_truth_resolved"
+      ],
+      "exit_conditions": [
+        "bamboo_resolved"
+      ],
+      "missions": [
+        "mision_9"
+      ],
+      "next_nodes": [
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_10",
+      "name": "El cementerio de Kanegawa",
+      "entry_conditions": [
+        "nakamura_resolved"
+      ],
+      "exit_conditions": [
+        "cemetery_resolved"
+      ],
+      "missions": [
+        "mision_10"
+      ],
+      "next_nodes": [
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_11",
       "name": "El juicio de Hōjō",
       "entry_conditions": [
         "sohei_resolved"
@@ -106,14 +175,14 @@
         "hojo_decision"
       ],
       "missions": [
-        "mision_7"
+        "mision_11"
       ],
       "next_nodes": [
-        "nodo_8"
+        "nodo_12"
       ]
     },
     {
-      "id": "nodo_8",
+      "id": "nodo_12",
       "name": "El camino del rōnin",
       "entry_conditions": [
         "hojo_decision"
@@ -121,7 +190,9 @@
       "exit_conditions": [
         "credits_seen"
       ],
-      "missions": [],
+      "missions": [
+        "mision_12"
+      ],
       "next_nodes": []
     }
   ]
