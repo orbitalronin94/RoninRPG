@@ -83,7 +83,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			touch_right = false
 		return
 
-	if not event is InputEventKey:
+	if not (event is InputEventKey):
 		return
 	var key_event := event as InputEventKey
 	if key_event.keycode == KEY_L:
@@ -538,6 +538,7 @@ func _draw_hud() -> void:
 	draw_string(ThemeDB.fallback_font, Vector2(34, 83), "HP %d / 100" % player_hp, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#f3dfc4"))
 	draw_string(ThemeDB.fallback_font, Vector2(926, 83), "HP %d / 100" % enemy_hp, HORIZONTAL_ALIGNMENT_RIGHT, -1, 13, Color("#f3dfc4"))
 	_draw_bar(Rect2(34, 91, 220, 8), player_ki, Color("#48c7dc"), Color("#203747"), 100.0)
+	_draw_bar(Rect2(706, 91, 220, 8), enemy_ki, Color("#b36be0"), Color("#382b49"), 100.0)
 	draw_string(ThemeDB.fallback_font, Vector2(430, 78), "%02d" % int(ceil(round_time)), HORIZONTAL_ALIGNMENT_CENTER, 100, 28, Color("#ffe7ae"))
 	draw_string(ThemeDB.fallback_font, Vector2(430, 101), "RONIN DUEL", HORIZONTAL_ALIGNMENT_CENTER, 100, 10, Color("#c8b9a0"))
 	if combo_count >= 2 and combo_timer > 0.0:
