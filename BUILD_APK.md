@@ -18,6 +18,8 @@ El APK de CI está firmado con una clave **de depuración**, destinada a pruebas
 - Confirma que el trabajo `build-apk` finalizó con éxito y descarga el artefacto `ronin-rpg-apk`.
 - Verifica que `builds/ronin-rpg.apk` existe en la rama principal o que está adjunto a la Release del tag.
 - Instálalo en un dispositivo/emulador Android y prueba apertura, movimiento, diálogo e interacción.
+- En la aldea, cierra el diálogo inicial y abre **DUELO** (o pulsa F); prueba ataque, especial, bloqueo sostenido, salto, dash, victoria/derrota, volver a la aldea y persistencia de Honor/victorias.
+- Comprueba también el layout horizontal y que los botones táctiles no se solapan en el tamaño de pantalla objetivo.
 - Anota versión de Godot, API Android, dispositivo y errores en `docs/apk_build_log.md`.
 
 ## Exportación manual
