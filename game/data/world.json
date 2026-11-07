@@ -1,0 +1,107 @@
+{
+  "id": "kanegawa_1573",
+  "name": "Provincia de Kanegawa",
+  "year": 1573,
+  "era": "Sengoku tardío",
+  "factions": [
+    {
+      "id": "hojo",
+      "name": "Clan Hōjō de Kanegawa",
+      "resource": "orden",
+      "value": 70,
+      "effects": {
+        "high": "guardias menos hostiles",
+        "low": "patrullas agresivas"
+      }
+    },
+    {
+      "id": "yasuke_net",
+      "name": "La Red de Yasuke",
+      "resource": "riqueza",
+      "value": 50,
+      "effects": {
+        "high": "descuentos e información",
+        "low": "acceso restringido"
+      }
+    },
+    {
+      "id": "nakamura",
+      "name": "Aldeanos de Nakamura",
+      "resource": "memoria",
+      "value": 30,
+      "effects": {
+        "high": "refugio y testimonios",
+        "low": "puertas cerradas"
+      }
+    },
+    {
+      "id": "inari",
+      "name": "Santuario de Inari",
+      "resource": "fe",
+      "value": 40,
+      "effects": {
+        "high": "bendiciones",
+        "low": "santuario restringido"
+      }
+    },
+    {
+      "id": "smiths",
+      "name": "Gremio de Herreros",
+      "resource": "artesania",
+      "value": 25,
+      "effects": {
+        "high": "equipo mejorado",
+        "low": "solo equipo básico"
+      }
+    },
+    {
+      "id": "coal_workers",
+      "name": "Carboneros del Monte Yama",
+      "resource": "carbon",
+      "value": 25,
+      "effects": {
+        "high": "acceso a minas",
+        "low": "acceso restringido"
+      }
+    },
+    {
+      "id": "fisherfolk",
+      "name": "Pescadores de la Costa",
+      "resource": "pesca",
+      "value": 25,
+      "effects": {
+        "high": "acceso al barco y costa",
+        "low": "desconfianza"
+      }
+    }
+  ],
+  "hidden_truth": "Hōjō ordenó la masacre de Nakamura para ocultar su comercio ilegal de armas.",
+  "locations": [
+    "kanegawa_village",
+    "sauce_path",
+    "yama_mountain",
+    "nakamura_ruins",
+    "hojo_castle",
+    "kanegawa_coast",
+    "take_bamboo_forest",
+    "kanegawa_cemetery",
+    "kanegawa_black_market"
+  ],
+  "starting_node": "nodo_1",
+  "season": "otoño",
+  "weather": [
+    "despejado",
+    "lluvia",
+    "niebla",
+    "nieve"
+  ],
+  "day_night_cycle": {
+    "day": "06:00-18:00",
+    "night": "18:00-06:00"
+  },
+  "economy": {
+    "currency": "mon",
+    "rice_price_multiplier": 3,
+    "drought_cause": "desviación del río para abastecer las minas del clan"
+  }
+}

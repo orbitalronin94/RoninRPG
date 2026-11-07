@@ -1,0 +1,199 @@
+{
+  "nodes": [
+    {
+      "id": "nodo_1",
+      "name": "El camino del sauce",
+      "entry_conditions": [
+        "game_start"
+      ],
+      "exit_conditions": [
+        "lodging_obtained"
+      ],
+      "missions": [
+        "mision_1"
+      ],
+      "next_nodes": [
+        "nodo_2"
+      ]
+    },
+    {
+      "id": "nodo_2",
+      "name": "El rumor del pozo",
+      "entry_conditions": [
+        "lodging_obtained"
+      ],
+      "exit_conditions": [
+        "well_reported"
+      ],
+      "missions": [
+        "mision_2"
+      ],
+      "next_nodes": [
+        "nodo_3"
+      ]
+    },
+    {
+      "id": "nodo_3",
+      "name": "La carta sellada",
+      "entry_conditions": [
+        "well_reported"
+      ],
+      "exit_conditions": [
+        "letter_resolved"
+      ],
+      "missions": [
+        "mision_3"
+      ],
+      "next_nodes": [
+        "nodo_4"
+      ]
+    },
+    {
+      "id": "nodo_4",
+      "name": "El oni del monte Yama",
+      "entry_conditions": [
+        "letter_resolved"
+      ],
+      "exit_conditions": [
+        "oni_resolved"
+      ],
+      "missions": [
+        "mision_4"
+      ],
+      "next_nodes": [
+        "nodo_5"
+      ]
+    },
+    {
+      "id": "nodo_5",
+      "name": "El regreso a Nakamura",
+      "entry_conditions": [
+        "oni_resolved"
+      ],
+      "exit_conditions": [
+        "nakamura_resolved"
+      ],
+      "missions": [
+        "mision_5"
+      ],
+      "next_nodes": [
+        "nodo_6",
+        "nodo_8",
+        "nodo_10"
+      ]
+    },
+    {
+      "id": "nodo_6",
+      "name": "El monje en el camino",
+      "entry_conditions": [
+        "nakamura_resolved"
+      ],
+      "exit_conditions": [
+        "sohei_resolved"
+      ],
+      "missions": [
+        "mision_6"
+      ],
+      "next_nodes": [
+        "nodo_7"
+      ]
+    },
+    {
+      "id": "nodo_7",
+      "name": "La verdad de Shiro",
+      "entry_conditions": [
+        "sohei_resolved"
+      ],
+      "exit_conditions": [
+        "shiro_truth_resolved"
+      ],
+      "missions": [
+        "mision_7"
+      ],
+      "next_nodes": [
+        "nodo_8",
+        "nodo_9",
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_8",
+      "name": "La costa de los contrabandistas",
+      "entry_conditions": [
+        "nakamura_resolved"
+      ],
+      "exit_conditions": [
+        "coast_resolved"
+      ],
+      "missions": [
+        "mision_8"
+      ],
+      "next_nodes": [
+        "nodo_9",
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_9",
+      "name": "El bosque de bambú",
+      "entry_conditions": [
+        "shiro_truth_resolved"
+      ],
+      "exit_conditions": [
+        "bamboo_resolved"
+      ],
+      "missions": [
+        "mision_9"
+      ],
+      "next_nodes": [
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_10",
+      "name": "El cementerio de Kanegawa",
+      "entry_conditions": [
+        "nakamura_resolved"
+      ],
+      "exit_conditions": [
+        "cemetery_resolved"
+      ],
+      "missions": [
+        "mision_10"
+      ],
+      "next_nodes": [
+        "nodo_11"
+      ]
+    },
+    {
+      "id": "nodo_11",
+      "name": "El juicio de Hōjō",
+      "entry_conditions": [
+        "sohei_resolved"
+      ],
+      "exit_conditions": [
+        "hojo_decision"
+      ],
+      "missions": [
+        "mision_11"
+      ],
+      "next_nodes": [
+        "nodo_12"
+      ]
+    },
+    {
+      "id": "nodo_12",
+      "name": "El camino del rōnin",
+      "entry_conditions": [
+        "hojo_decision"
+      ],
+      "exit_conditions": [
+        "credits_seen"
+      ],
+      "missions": [
+        "mision_12"
+      ],
+      "next_nodes": []
+    }
+  ]
+}

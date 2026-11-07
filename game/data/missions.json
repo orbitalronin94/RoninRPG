@@ -1,0 +1,467 @@
+{
+  "missions": [
+    {
+      "id": "mision_1",
+      "name": "Un sitio donde dormir",
+      "node": "nodo_1",
+      "objective": "Hablar con O-Ren y conseguir alojamiento.",
+      "steps": [
+        "Entrar en la posada",
+        "Hablar con O-Ren",
+        "Elegir pago, favor o mencionar a Yasuke"
+      ],
+      "rewards": {
+        "lodging": true
+      },
+      "consequences": {
+        "pay": {
+          "riqueza": -10
+        },
+        "favor": {
+          "quest": "favor_oren"
+        },
+        "yasuke": {
+          "riqueza": 5,
+          "oren_trust": -10
+        }
+      }
+    },
+    {
+      "id": "mision_2",
+      "name": "El pozo envenenado",
+      "node": "nodo_2",
+      "objective": "Investigar el pozo y decidir a quién informar.",
+      "steps": [
+        "Examinar el agua",
+        "Hablar con un aldeano",
+        "Informar al clan o a los aldeanos"
+      ],
+      "rewards": {
+        "monedas": 100,
+        "information": true
+      },
+      "consequences": {
+        "report_clan": {
+          "orden": 10,
+          "memoria": -10
+        },
+        "report_village": {
+          "memoria": 10,
+          "orden": -10
+        }
+      }
+    },
+    {
+      "id": "mision_3",
+      "name": "La carta de Yasuke",
+      "node": "nodo_3",
+      "objective": "Entregar o abrir la carta sellada.",
+      "steps": [
+        "Recibir la carta",
+        "Ir al santuario",
+        "Decidir si abrirla"
+      ],
+      "rewards": {
+        "monedas": 200,
+        "sanctuary_access": true
+      },
+      "consequences": {
+        "respect_secret": {
+          "fe": 5,
+          "riqueza": -5
+        },
+        "open_letter": {
+          "riqueza": 5,
+          "fe": -5
+        }
+      }
+    },
+    {
+      "id": "mision_4",
+      "name": "El oni del monte Yama",
+      "node": "nodo_4",
+      "objective": "Resolver el encuentro con el oni.",
+      "steps": [
+        "Subir al monte",
+        "Encontrar al oni",
+        "Combatir, escuchar o ayudarlo a descansar"
+      ],
+      "rewards": {
+        "monedas": 300,
+        "item": "variable"
+      },
+      "consequences": {
+        "kill": {
+          "orden": 15,
+          "honor": -10
+        },
+        "listen": {
+          "fe": 10,
+          "orden": -10
+        },
+        "help_rest": {
+          "fe": 15,
+          "honor": 10,
+          "orden": -5
+        }
+      }
+    },
+    {
+      "id": "mision_5",
+      "name": "Los muertos de Nakamura",
+      "node": "nodo_5",
+      "objective": "Explorar las ruinas y hablar con el yūrei del niño.",
+      "steps": [
+        "Recibir la pista de Hana",
+        "Viajar a las ruinas",
+        "Hablar o huir"
+      ],
+      "rewards": {
+        "flashback": true
+      },
+      "consequences": {
+        "speak": {
+          "honor": 10,
+          "fe": 10
+        },
+        "flee": {
+          "honor": -10
+        }
+      }
+    },
+    {
+      "id": "mision_6",
+      "name": "El monje en el camino",
+      "node": "nodo_6",
+      "objective": "Escuchar la confesión de Sōhei y decidir su destino.",
+      "steps": [
+        "Encontrar a Sōhei",
+        "Escuchar su confesión",
+        "Perdonar, matar o dejarlo testificar"
+      ],
+      "rewards": {
+        "variable": true
+      },
+      "consequences": {
+        "forgive": {
+          "fe": 10,
+          "honor": -5
+        },
+        "kill": {
+          "orden": 10,
+          "fe": -10
+        },
+        "testify": {
+          "memoria": 15
+        }
+      }
+    },
+    {
+      "id": "mision_7",
+      "name": "La verdad de Shiro",
+      "node": "nodo_7",
+      "objective": "Investigar el colgante de Shiro y decidir cómo revelar su origen.",
+      "steps": [
+        "Hablar con Sayo",
+        "Examinar el colgante",
+        "Contárselo a Kiyohime, a Shiro o guardar silencio"
+      ],
+      "rewards": {
+        "shiro_truth": true
+      },
+      "consequences": {
+        "tell_kiyohime": {
+          "fe": 10,
+          "memoria": 10
+        },
+        "tell_shiro": {
+          "honor": 5,
+          "shiro_trust": 15
+        },
+        "keep_silent": {
+          "honor": -5
+        }
+      }
+    },
+    {
+      "id": "mision_8",
+      "name": "La costa de los contrabandistas",
+      "node": "nodo_8",
+      "objective": "Resolver el barco encallado y decidir el destino de las armas.",
+      "steps": [
+        "Hablar con Jirō",
+        "Inspeccionar el barco",
+        "Devolver, destruir o quedarse la carga"
+      ],
+      "rewards": {
+        "information": true
+      },
+      "consequences": {
+        "return_to_yasuke": {
+          "riqueza": 15
+        },
+        "destroy": {
+          "fe": 10,
+          "riqueza": -15
+        },
+        "keep": {
+          "riqueza": 30,
+          "honor": -10
+        }
+      }
+    },
+    {
+      "id": "mision_9",
+      "name": "El bosque de bambú",
+      "node": "nodo_9",
+      "objective": "Convencer al ermitaño ciego de dejar pasar a Kagetora.",
+      "steps": [
+        "Encontrar el sendero oculto",
+        "Responder al acertijo",
+        "Respetar, desafiar o retirarse"
+      ],
+      "rewards": {
+        "skill": "corte_del_bambu"
+      },
+      "consequences": {
+        "respect": {
+          "fe": 10,
+          "honor": 5
+        },
+        "force": {
+          "honor": -10
+        }
+      }
+    },
+    {
+      "id": "mision_10",
+      "name": "El sake de los muertos",
+      "node": "nodo_10",
+      "objective": "Llevar sake al cementerio y escuchar al hijo de O-Ren.",
+      "steps": [
+        "Conseguir sake",
+        "Hacer la ofrenda",
+        "Decidir si contárselo a O-Ren"
+      ],
+      "rewards": {
+        "memoria": 10,
+        "oren_trust": 20
+      },
+      "consequences": {
+        "tell_oren": {
+          "oren_trust": 20,
+          "honor": 5
+        },
+        "keep_silent": {
+          "honor": -5
+        }
+      }
+    },
+    {
+      "id": "mision_11",
+      "name": "El juicio de Hōjō",
+      "node": "nodo_11",
+      "objective": "Decidir cómo responder a la oferta y a los crímenes del señor.",
+      "steps": [
+        "Entrar al castillo",
+        "Escuchar la oferta",
+        "Aceptar, combatir, exponer o sacrificarse"
+      ],
+      "rewards": {
+        "ending_unlocked": true
+      },
+      "consequences": {
+        "accept": {
+          "orden": 15,
+          "honor": -15
+        },
+        "fight": {
+          "honor": 5
+        },
+        "expose": {
+          "memoria": 15,
+          "fe": 15
+        },
+        "sacrifice": {
+          "honor": 20
+        }
+      }
+    },
+    {
+      "id": "mision_12",
+      "name": "El camino del rōnin",
+      "node": "nodo_12",
+      "objective": "Ver el epílogo que corresponde a las decisiones acumuladas.",
+      "steps": [
+        "Revisar las consecuencias",
+        "Ver el epílogo",
+        "Leer el resumen de decisiones"
+      ],
+      "rewards": {
+        "credits": true
+      },
+      "consequences": {}
+    },
+    {
+      "id": "sec_oren_favor",
+      "name": "El favor de O-Ren",
+      "node": "nodo_1",
+      "type": "side",
+      "objective": "Limpiar el establo de la posada.",
+      "steps": [
+        "Hablar con O-Ren",
+        "Limpiar el establo"
+      ],
+      "rewards": {
+        "monedas": 50,
+        "oren_trust": 10
+      },
+      "consequences": {
+        "complete": {
+          "lodging_free": true
+        }
+      }
+    },
+    {
+      "id": "sec_sake_sayo",
+      "name": "El sake de Sayo",
+      "node": "nodo_2",
+      "type": "side",
+      "objective": "Llevar sake al santuario.",
+      "steps": [
+        "Conseguir sake",
+        "Entregarlo a Sayo"
+      ],
+      "rewards": {
+        "fe": 5,
+        "sayo_trust": 15
+      },
+      "consequences": {
+        "complete": {
+          "kiyohime_clue": true
+        }
+      }
+    },
+    {
+      "id": "sec_shiro_pendant",
+      "name": "El colgante de Shiro",
+      "node": "nodo_3",
+      "type": "side",
+      "objective": "Investigar el origen del colgante de Shiro.",
+      "steps": [
+        "Hablar con Shiro",
+        "Examinar el tejido"
+      ],
+      "rewards": {
+        "shiro_trust": 20
+      },
+      "consequences": {
+        "complete": {
+          "shiro_clue": true
+        }
+      }
+    },
+    {
+      "id": "sec_taro_iron",
+      "name": "El hierro de Tarō",
+      "node": "nodo_4",
+      "type": "side",
+      "objective": "Recuperar tres trozos de hierro de las minas.",
+      "steps": [
+        "Entrar en las minas",
+        "Recoger tres trozos",
+        "Entregarlos a Tarō"
+      ],
+      "rewards": {
+        "weapon_damage": 5
+      },
+      "consequences": {
+        "complete": {
+          "crafting_unlocked": true
+        }
+      }
+    },
+    {
+      "id": "sec_kuma_coal",
+      "name": "El carbón de Kuma",
+      "node": "nodo_4",
+      "type": "side",
+      "objective": "Proteger a los carboneros de una banda de asaltantes.",
+      "steps": [
+        "Hablar con Kuma",
+        "Defender el campamento"
+      ],
+      "rewards": {
+        "coal": 20
+      },
+      "consequences": {
+        "complete": {
+          "mines_access": true
+        }
+      }
+    },
+    {
+      "id": "sec_jiro_fishing",
+      "name": "La pesca de Jirō",
+      "node": "nodo_5",
+      "type": "side",
+      "objective": "Investigar por qué han desaparecido los peces.",
+      "steps": [
+        "Hablar con pescadores",
+        "Examinar la desembocadura"
+      ],
+      "rewards": {
+        "fishing": 20
+      },
+      "consequences": {
+        "complete": {
+          "yasuke_ship_access": true
+        }
+      }
+    },
+    {
+      "id": "sec_dead_sake",
+      "name": "El sake de los muertos",
+      "node": "nodo_5",
+      "type": "side",
+      "objective": "Llevar sake al cementerio y atender la petición del yūrei.",
+      "steps": [
+        "Conseguir sake",
+        "Hacer la ofrenda",
+        "Hablar con el espíritu"
+      ],
+      "rewards": {
+        "memoria": 10,
+        "oren_trust": 20
+      },
+      "consequences": {
+        "tell_oren": {
+          "oren_trust": 20
+        }
+      }
+    },
+    {
+      "id": "sec_lost_letter",
+      "name": "La carta perdida",
+      "node": "nodo_6",
+      "type": "side",
+      "objective": "Recuperar una carta robada que compromete a Yasuke.",
+      "steps": [
+        "Buscar al ladrón",
+        "Recuperar la carta",
+        "Decidir a quién entregarla"
+      ],
+      "rewards": {
+        "riqueza": 30
+      },
+      "consequences": {
+        "return": {
+          "yasuke_trust": 10
+        },
+        "expose": {
+          "memoria": 10
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,338 @@
+{
+  "encounters": [
+    {
+      "id": "kyubi",
+      "name": "Kitsune de nueve colas",
+      "zone": "sauce_path",
+      "activation": {
+        "honor_min": 30,
+        "honor_max": 60,
+        "node_min": 3
+      },
+      "question": "¿Eres el samurái que fuiste o el rōnin que eres?",
+      "choices": [
+        {
+          "id": "name",
+          "text": "Decir el nombre real",
+          "effects": {
+            "honor": 5
+          }
+        },
+        {
+          "id": "nameless",
+          "text": "Decir que no tienes nombre",
+          "effects": {
+            "honor": -5,
+            "fe": 5
+          }
+        },
+        {
+          "id": "attack",
+          "text": "Atacar",
+          "effects": {
+            "honor": -10,
+            "fe": -10
+          },
+          "combat": "kitsune"
+        }
+      ],
+      "reward": "pelo_de_kitsune"
+    },
+    {
+      "id": "yama_oni",
+      "name": "Oni del monte Yama",
+      "zone": "yama_mountain",
+      "activation": {
+        "node": 4,
+        "required": true
+      },
+      "question": "¿Cuánta humanidad sacrificarás para sobrevivir?",
+      "choices": [
+        {
+          "id": "kill",
+          "text": "Matar",
+          "effects": {
+            "orden": 15,
+            "honor": -10
+          }
+        },
+        {
+          "id": "listen",
+          "text": "Escuchar",
+          "effects": {
+            "fe": 10,
+            "orden": -10
+          }
+        },
+        {
+          "id": "help",
+          "text": "Ayudarlo a descansar",
+          "effects": {
+            "honor": 10,
+            "fe": 15,
+            "orden": -5
+          },
+          "reward": "pico_del_minero"
+        }
+      ]
+    },
+    {
+      "id": "tengu",
+      "name": "Tengu del bosque de bambú",
+      "zone": "take_bamboo_forest",
+      "activation": {
+        "honor_min": 60,
+        "node_min": 5
+      },
+      "question": "¿Puedes aceptar ayuda de quien no te la debe?",
+      "choices": [
+        {
+          "id": "accept",
+          "text": "Aceptar",
+          "effects": {
+            "skill": "corte_del_viento"
+          }
+        },
+        {
+          "id": "reject",
+          "text": "Rechazar",
+          "effects": {
+            "honor": -5,
+            "fe": -5
+          }
+        },
+        {
+          "id": "challenge",
+          "text": "Desafiar",
+          "combat": "tengu"
+        }
+      ]
+    },
+    {
+      "id": "kappa",
+      "name": "Kappa del río Kanegawa",
+      "zone": "sauce_path",
+      "activation": {
+        "node_min": 2,
+        "flag": "well_investigated"
+      },
+      "question": "¿Qué le debes a quien te ha salvado la vida?",
+      "choices": [
+        {
+          "id": "everything",
+          "text": "Todo",
+          "effects": {
+            "fe": 5
+          },
+          "reward": "escama_curativa"
+        },
+        {
+          "id": "nothing",
+          "text": "Nada",
+          "effects": {
+            "honor": -5
+          },
+          "status": "mojado"
+        },
+        {
+          "id": "bow",
+          "text": "Hacer una reverencia",
+          "effects": {
+            "fe": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "child_yurei",
+      "name": "Yūrei del niño",
+      "zone": "nakamura_ruins",
+      "activation": {
+        "node": 5,
+        "required": true
+      },
+      "question": "¿Por qué yo sigo aquí y tú no?",
+      "choices": [
+        {
+          "id": "guilt",
+          "text": "Porque yo también debería estar muerto",
+          "effects": {
+            "honor": 10,
+            "fe": 10
+          },
+          "flag": "child_truth_revealed"
+        },
+        {
+          "id": "unknown",
+          "text": "No lo sé",
+          "effects": {
+            "honor": -5
+          }
+        },
+        {
+          "id": "flee",
+          "text": "Huir",
+          "effects": {
+            "honor": -10
+          },
+          "status": "atormentado"
+        }
+      ]
+    },
+    {
+      "id": "oren_yurei",
+      "name": "Yūrei del hijo de O-Ren",
+      "zone": "kanegawa_cemetery",
+      "activation": {
+        "mission": "sec_dead_sake"
+      },
+      "question": "Dile a mi madre que no llore.",
+      "choices": [
+        {
+          "id": "accept",
+          "text": "Aceptar",
+          "effects": {
+            "oren_trust": 20
+          }
+        },
+        {
+          "id": "refuse",
+          "text": "Rechazar",
+          "effects": {
+            "honor": -10
+          }
+        }
+      ]
+    },
+    {
+      "id": "bakeneko",
+      "name": "Bakeneko del mercado negro",
+      "zone": "kanegawa_black_market",
+      "activation": {
+        "wealth_min": 60,
+        "node_min": 6
+      },
+      "question": "¿Qué venderías por un poco más de suerte?",
+      "choices": [
+        {
+          "id": "memory",
+          "text": "Vender un recuerdo",
+          "effects": {
+            "honor": -5,
+            "riqueza": 20
+          }
+        },
+        {
+          "id": "refuse",
+          "text": "Negarse",
+          "effects": {
+            "fe": 5
+          }
+        },
+        {
+          "id": "sake",
+          "text": "Ofrecer sake",
+          "effects": {
+            "riqueza": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "nurikabe",
+      "name": "Nurikabe del camino del sauce",
+      "zone": "sauce_path",
+      "activation": {
+        "node_min": 5
+      },
+      "question": "No pasas.",
+      "choices": [
+        {
+          "id": "fight",
+          "text": "Combatir",
+          "combat": "nurikabe"
+        },
+        {
+          "id": "riddle",
+          "text": "Resolver el acertijo",
+          "answer": "un agujero",
+          "effects": {
+            "path_open": true
+          }
+        },
+        {
+          "id": "detour",
+          "text": "Rodear",
+          "effects": {
+            "time_cost": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "yuki_onna",
+      "name": "Yuki-onna del monte Yama",
+      "zone": "yama_mountain",
+      "activation": {
+        "weather": "nieve",
+        "node_min": 4
+      },
+      "question": "¿Te quedas conmigo o vuelves con los vivos?",
+      "choices": [
+        {
+          "id": "stay",
+          "text": "Quedarse",
+          "effects": {
+            "game_over": true
+          }
+        },
+        {
+          "id": "refuse",
+          "text": "Rechazar",
+          "effects": {
+            "honor": 5
+          }
+        },
+        {
+          "id": "sake",
+          "text": "Ofrecer sake",
+          "effects": {
+            "fe": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "kodama",
+      "name": "Kodama del bosque de bambú",
+      "zone": "take_bamboo_forest",
+      "activation": {
+        "node": 9
+      },
+      "question": "Los espíritus observan cómo tratas el bosque.",
+      "choices": [
+        {
+          "id": "sake",
+          "text": "Ofrecer sake",
+          "effects": {
+            "fe": 5
+          }
+        },
+        {
+          "id": "pray",
+          "text": "Rezar",
+          "effects": {
+            "fe": 5
+          }
+        },
+        {
+          "id": "ignore",
+          "text": "Ignorar",
+          "effects": {
+            "honor": -2
+          }
+        }
+      ]
+    }
+  ]
+}

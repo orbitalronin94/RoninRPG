@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "seasons": [
+    {
+      "id": "otoño",
+      "starts_at": "game_start",
+      "effects": [
+        "hojas_caidas",
+        "sequía_visible"
+      ]
+    },
+    {
+      "id": "invierno",
+      "starts_after": "nodo_8",
+      "effects": [
+        "nieve_posible",
+        "movimiento_lento",
+        "yuki_onna_activa"
+      ]
+    },
+    {
+      "id": "primavera",
+      "starts_after": "nodo_11",
+      "effects": [
+        "vegetacion_recuperada",
+        "epilogo_variable"
+      ]
+    }
+  ],
+  "weather": [
+    {
+      "id": "despejado",
+      "effects": []
+    },
+    {
+      "id": "lluvia",
+      "effects": [
+        "apaga_fuego"
+      ]
+    },
+    {
+      "id": "niebla",
+      "effects": [
+        "reduce_alcance"
+      ]
+    },
+    {
+      "id": "nieve",
+      "effects": [
+        "reduce_movimiento"
+      ]
+    }
+  ],
+  "day_night": {
+    "day": "06:00-18:00",
+    "night": "18:00-06:00",
+    "night_effects": [
+      "yokai_more_active",
+      "some_npcs_home"
+    ]
+  },
+  "combat": {
+    "grid": [
+      10,
+      10
+    ],
+    "player": {
+      "hp": 100,
+      "ki": 50,
+      "ki_regen_per_turn": 5,
+      "movement": 4,
+      "base_damage": [
+        15,
+        25
+      ]
+    },
+    "skills": [
+      {
+        "id": "corte_del_sauce",
+        "ki": 10,
+        "damage": [
+          20,
+          30
+        ],
+        "shape": "line_3"
+      },
+      {
+        "id": "meditacion",
+        "ki": 0,
+        "heal": 15,
+        "consumes_turn": true
+      },
+      {
+        "id": "corte_del_viento",
+        "ki": 20,
+        "damage": [
+          25,
+          35
+        ],
+        "shape": "area_2x2",
+        "unlock": "tengu_or_story"
+      },
+      {
+        "id": "postura_defensiva",
+        "ki": 5,
+        "damage_reduction_percent": 50,
+        "duration_turns": 1
+      },
+      {
+        "id": "corte_del_bambu",
+        "ki": 15,
+        "ignores_armor": true,
+        "unlock": "blind_hermit"
+      },
+      {
+        "id": "silencio_del_sauce",
+        "ki": 25,
+        "nonlethal": true,
+        "paralyze_turns": 2,
+        "unlock": "ending_sauce_bloomed"
+      }
+    ]
+  },
+  "honor": {
+    "min": 0,
+    "max": 100,
+    "starting": 50,
+    "ranges": [
+      {
+        "min": 0,
+        "max": 19,
+        "id": "ronin_sin_nombre"
+      },
+      {
+        "min": 20,
+        "max": 39,
+        "id": "ronin_errante"
+      },
+      {
+        "min": 40,
+        "max": 59,
+        "id": "ronin_con_peso"
+      },
+      {
+        "min": 60,
+        "max": 79,
+        "id": "ronin_respetado"
+      },
+      {
+        "min": 80,
+        "max": 100,
+        "id": "ronin_de_honor"
+      }
+    ]
+  },
+  "endings": [
+    {
+      "id": "samurai_returned",
+      "name": "El samurái que volvió",
+      "requirements": [
+        "accept_hojo"
+      ]
+    },
+    {
+      "id": "ronin_remembered",
+      "name": "El rōnin que recordó",
+      "requirements": [
+        "expose_hojo"
+      ]
+    },
+    {
+      "id": "lord_slayer",
+      "name": "El que mató al señor",
+      "requirements": [
+        "kill_hojo"
+      ]
+    },
+    {
+      "id": "sauce_bloomed",
+      "name": "El sauce floreció",
+      "requirements": [
+        "honor>=80",
+        "fe>=70",
+        "memoria>=70",
+        "reconcile_kiyohime_shiro",
+        "spare_sohei",
+        "expose_hojo"
+      ]
+    },
+    {
+      "id": "stayed",
+      "name": "El que se quedó",
+      "requirements": [
+        "artesania>=80"
+      ]
+    },
+    {
+      "id": "left",
+      "name": "El que se fue",
+      "requirements": [
+        "honor<20"
+      ]
+    }
+  ]
+}

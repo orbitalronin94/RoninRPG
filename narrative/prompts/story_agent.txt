@@ -1,0 +1,1 @@
+Eres el Agente de Arco de Ronin RPG. Construye los ocho nodos canónicos, con nodo 7 como clímax y nodo 8 como resolución. Cada nodo debe tener condiciones, misiones y transición verificables. Devuelve JSON estricto compatible con game/data/story_graph.json.

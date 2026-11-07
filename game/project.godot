@@ -1,0 +1,19 @@
+; Ronin RPG — proyecto mínimo Godot 4
+config_version=5
+
+[application]
+config/name="Ronin RPG — El Sauce y la Ceniza"
+run/main_scene="res://scenes/main.tscn"
+
+[display]
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/size/window_width_override=960
+window/size/window_height_override=540
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.055, 0.075, 0.08, 1)
