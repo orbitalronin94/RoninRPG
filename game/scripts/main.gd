@@ -51,6 +51,9 @@ func _ready() -> void:
 func _process(dt: float) -> void:
 	flash = maxf(0, flash - dt)
 	if mode == Mode.GAME:
+		if tap == "jump":
+			_jump()
+			tap = ""
 		_update_player(dt)
 		_update_attack(dt)
 		_update_enemy(dt)
@@ -82,7 +85,7 @@ func _input(event: InputEvent) -> void:
 		var a := _touch_action(event.position)
 		if a != "":
 			touch[event.index] = a
-			if a == "light" or a == "heavy" or a == "interact":
+			if a == "light" or a == "heavy" or a == "interact" or a == "jump":
 				tap = a
 			elif a == "pause":
 				mode = Mode.PAUSE
@@ -134,7 +137,6 @@ func _update_player(dt: float) -> void:
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT) or _down("left"): axis -= 1
 	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT) or _down("right"): axis += 1
 	if _down("dodge"): _dodge()
-	if _down("jump"): _jump()
 	guard = Input.is_key_pressed(KEY_I) or _down("guard")
 	if dodge_clock > 0:
 		player.x += facing * 220 * dt
@@ -452,7 +454,7 @@ func _draw_hud() -> void:
 	draw_string(ThemeDB.fallback_font,Vector2(12,261),"A/D mover · W saltar · J/K atacar · L esquivar · I cubrir · E interactuar",HORIZONTAL_ALIGNMENT_LEFT,450,7,Color("#c8c0ae"))
 	if dialogue != "":
 		draw_rect(Rect2(12,151,456,50),Color(0.03,0.04,0.06,0.94))
-		var dialogue_lines := dialogue.split("\\n")
+		var dialogue_lines := dialogue.split("\n")
 		for i in range(dialogue_lines.size()):
 			draw_string(ThemeDB.fallback_font,Vector2(20,165 + i * 10),dialogue_lines[i],HORIZONTAL_ALIGNMENT_LEFT,440,8,Color("#f0dfbd"))
 

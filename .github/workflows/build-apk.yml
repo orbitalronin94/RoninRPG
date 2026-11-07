@@ -83,6 +83,7 @@ jobs:
         run: |
           "$GODOT_BIN" --headless --editor --path game --quit
           "$GODOT_BIN" --headless --path game --quit-after 5
+          "$GODOT_BIN" --headless --path game --script res://tests/smoke_test.gd
 
       - name: Export APK
         env:
