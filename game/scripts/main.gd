@@ -21,6 +21,8 @@ var level := 1
 var gold := 0
 var honor := 0
 var boss_done := false
+var save_exists := false
+var mika_spoken := false
 var enemy := ""
 var enemy_pos := Vector2(380, FLOOR)
 var enemy_hp := 0
@@ -58,23 +60,34 @@ func _process(dt: float) -> void:
 	elif mode == Mode.TITLE and tap == "start":
 		_new_game()
 		tap = ""
+	elif mode == Mode.TITLE and tap == "continue":
+		_continue_game()
+		tap = ""
 	elif mode == Mode.PAUSE and tap == "resume":
 		mode = Mode.GAME
 		tap = ""
 	queue_redraw()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventScreenTouch:
+	if event is InputEventScreenTouch and event.pressed:
+		if mode == Mode.TITLE:
+			tap = "continue" if event.position.x > 240.0 else "start"
+			return
+		if mode == Mode.PAUSE:
+			mode = Mode.GAME
+			return
+		if mode == Mode.WIN or mode == Mode.LOSE:
+			mode = Mode.TITLE
+			return
 		var a := _touch_action(event.position)
-		if event.pressed:
-			if a != "":
-				touch[event.index] = a
-				if a == "light" or a == "heavy" or a == "interact":
-					tap = a
-				elif a == "start":
-					tap = "start"
-		else:
-			touch.erase(event.index)
+		if a != "":
+			touch[event.index] = a
+			if a == "light" or a == "heavy" or a == "interact":
+				tap = a
+			elif a == "pause":
+				mode = Mode.PAUSE
+	elif event is InputEventScreenTouch and not event.pressed:
+		touch.erase(event.index)
 	elif event is InputEventScreenDrag:
 		var a := _touch_action(event.position)
 		if a == "":
@@ -88,6 +101,8 @@ func _input(event: InputEvent) -> void:
 			else: mode = Mode.TITLE
 		elif mode == Mode.TITLE and (event.keycode == KEY_ENTER or event.keycode == KEY_SPACE):
 			_new_game()
+		elif mode == Mode.TITLE and event.keycode == KEY_C:
+			_continue_game()
 		elif mode == Mode.PAUSE and event.keycode == KEY_ENTER:
 			mode = Mode.GAME
 		elif mode == Mode.GAME:
@@ -101,13 +116,16 @@ func _down(action: String) -> bool:
 	return touch.values().has(action)
 
 func _touch_action(p: Vector2) -> String:
-	if p.y < 200: return ""
+	if p.y < 200.0:
+		if p.x > 438.0 and p.y < 42.0: return "pause"
+		if p.x > 430.0 and p.y > 160.0: return "interact"
+		return ""
 	if p.x < 62: return "left"
 	if p.x < 118: return "right"
-	if p.x > 414: return "light"
-	if p.x > 354: return "heavy"
-	if p.x > 294: return "dodge"
-	if p.x > 234: return "guard"
+	if p.x > 434: return "heavy"
+	if p.x > 388: return "light"
+	if p.x > 338: return "dodge"
+	if p.x > 286: return "guard"
 	return "interact"
 
 func _update_player(dt: float) -> void:
@@ -293,8 +311,21 @@ func _save() -> void:
 	f.close()
 	DirAccess.rename_absolute(SAVE + ".tmp", SAVE)
 
+func _continue_game() -> void:
+	if not save_exists:
+		message = "Todavía no hay una partida guardada."
+		return
+	_load_save()
+	if boss_done:
+		mode = Mode.WIN
+	else:
+		mode = Mode.GAME
+		if area == Area.FOREST:
+			_spawn("grunt")
+
 func _load_save() -> void:
 	if not FileAccess.file_exists(SAVE): return
+	save_exists = true
 	var f := FileAccess.open(SAVE, FileAccess.READ)
 	if f == null: return
 	var d = JSON.parse_string(f.get_as_text())
@@ -412,10 +443,12 @@ func _draw_hud() -> void:
 func _draw_controls() -> void:
 	_button(Rect2(8,204,48,28),"◀")
 	_button(Rect2(62,204,48,28),"▶")
-	_button(Rect2(294,204,48,28),"DEF")
-	_button(Rect2(346,204,48,28),"DOD")
-	_button(Rect2(398,204,74,28),"ATACAR")
+	_button(Rect2(286,204,48,28),"DEF")
+	_button(Rect2(338,204,48,28),"DOD")
+	_button(Rect2(390,204,40,28),"J")
+	_button(Rect2(434,204,38,28),"K")
 	_button(Rect2(438,170,34,26),"E")
+	_button(Rect2(438,8,34,24),"II")
 
 func _button(r: Rect2,label: String) -> void:
 	draw_rect(r,Color(0.08,0.10,0.13,0.74))
@@ -427,8 +460,11 @@ func _draw_title() -> void:
 	draw_string(ThemeDB.fallback_font,Vector2(44,76),"RONIN",HORIZONTAL_ALIGNMENT_LEFT,390,30,Color("#f1dfb4"))
 	draw_string(ThemeDB.fallback_font,Vector2(46,99),"SHADOW DOJO",HORIZONTAL_ALIGNMENT_LEFT,390,16,Color("#c45b61"))
 	draw_string(ThemeDB.fallback_font,Vector2(46,132),"Una espada. Dos mundos. Ningun camino sin precio.",HORIZONTAL_ALIGNMENT_LEFT,390,9,Color("#e1d4b8"))
-	draw_rect(Rect2(145,164,190,34),Color("#6e353e"))
-	draw_string(ThemeDB.fallback_font,Vector2(160,186),"ENTER / TOCAR: COMENZAR",HORIZONTAL_ALIGNMENT_LEFT,170,9,Color("#fff0d1"))
+	draw_rect(Rect2(72,164,156,34),Color("#6e353e"))
+	draw_string(ThemeDB.fallback_font,Vector2(88,186),"ENTER: NUEVA PARTIDA",HORIZONTAL_ALIGNMENT_LEFT,132,8,Color("#fff0d1"))
+	draw_rect(Rect2(252,164,156,34),Color("#405c56"))
+	draw_string(ThemeDB.fallback_font,Vector2(269,186),"C: CONTINUAR",HORIZONTAL_ALIGNMENT_LEFT,132,8,Color("#fff0d1"))
+	draw_string(ThemeDB.fallback_font,Vector2(12,258),"RONIN RPG · PROTOTIPO DE COMBATE",HORIZONTAL_ALIGNMENT_LEFT,456,7,Color("#b9b1a1"))
 
 func _overlay(title: String,subtitle: String) -> void:
 	draw_rect(Rect2(62,83,356,102),Color(0.02,0.03,0.05,0.94))
