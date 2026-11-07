@@ -1,10 +1,13 @@
-# Inventario de assets
+# Registro de assets — RONIN: SHADOW DOJO
 
-La primera versión dibuja formas y escenarios mediante código de Godot; no incorpora imágenes, música ni efectos externos.
+La dirección visual aprobada es pixel art original de fantasía japonesa. El proyecto recuperado no contiene sprites externos; la escena antigua dibujaba geometría con Godot. No reutilizar sus personajes históricos como contenido canónico.
 
-| Recurso | Procedencia | Licencia |
+| Recurso | Estado | Procedencia/licencia |
 |---|---|---|
-| Escenario de prototipo | Dibujado por código en Godot | Código del proyecto |
-| Música y SFX externos | No incluidos | No aplica |
+| Prototipo procedural anterior | Histórico | Código propio del repositorio |
+| Akane y roster | Por producir | Original |
+| Yokai y jefas | Por producir | Original |
+| Tilesets de aldea/bosque/santuario | Por producir | Original |
+| Música y SFX | Por producir | Original o licencia compatible documentada |
 
-Antes de añadir assets externos, verifica licencia y registra autor, URL, licencia y modificaciones.
+Cada recurso nuevo debe registrar autor, URL si aplica, licencia, modificaciones y fecha de incorporación. No integrar sprites extraídos de juegos comerciales.
