@@ -7,7 +7,7 @@
 | CP-00 | ACCEPTED | Commit `ea246ba`, `RECOVERY_AUDIT.md` | Árbol histórico inventariado y 33 archivos restaurados |
 | CP-01 | ACCEPTED | `architecture.md`, `RECOVERY_AUDIT.md` | Matriz KEEP/ADAPT/REWRITE/DEFER |
 | CP-02 | IN_PROGRESS | README, ART_BIBLE, NARRATIVE_BIBLE, QA_MATRIX | Documentación base creada; falta revisión de consistencia global |
-| CP-03 | NOT_STARTED | Workflow Android restaurado | Requiere run CI verde; no afirmar importación ni APK |
+| CP-03 | IN_PROGRESS | Run `42375387029` | Importación y ejecución headless pasan; exportación Android falla todavía en el sistema legacy de Godot, sin mensaje de causa explícito |
 | CP-04–18 | NOT_STARTED | — | Bloqueados hasta CP-03 |
 
 ## Política

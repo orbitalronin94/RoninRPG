@@ -122,6 +122,7 @@ func _touch_action(p: Vector2) -> String:
 		return ""
 	if p.x < 62: return "left"
 	if p.x < 118: return "right"
+	if p.x >= 220 and p.x < 280: return "jump"
 	if p.x > 434: return "heavy"
 	if p.x > 388: return "light"
 	if p.x > 338: return "dodge"
@@ -133,6 +134,7 @@ func _update_player(dt: float) -> void:
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT) or _down("left"): axis -= 1
 	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT) or _down("right"): axis += 1
 	if _down("dodge"): _dodge()
+	if _down("jump"): _jump()
 	guard = Input.is_key_pressed(KEY_I) or _down("guard")
 	if dodge_clock > 0:
 		player.x += facing * 220 * dt
@@ -274,8 +276,12 @@ func _interact() -> void:
 	if area == Area.VILLAGE:
 		if absf(player.x - 142) < 52:
 			dialogue = "Mika: El bosque devuelve una luz azul. Si oyes campanas, no respondas."
-			honor += 1
-			message = "Mika te entrega un talismán. Honor +1."
+			if not mika_spoken:
+				honor += 1
+				mika_spoken = true
+				message = "Mika te entrega un talismán. Honor +1."
+			else:
+				message = "Mika: El bosque sigue esperando. No bajes la guardia."
 		elif player.x > 398:
 			area = Area.FOREST
 			player.x = 36
@@ -297,6 +303,7 @@ func _new_game() -> void:
 	gold = 0
 	honor = 0
 	boss_done = false
+	mika_spoken = false
 	enemy_alive = false
 	dialogue = "Akane: La emboscada no fue obra de bandidos. Alguien abrió el sello."
 	message = "Habla con Mika y cruza al bosque de bambú."
@@ -304,12 +311,18 @@ func _new_game() -> void:
 	_save()
 
 func _save() -> void:
-	var data := {"schema": 1, "area": int(area), "x": player.x, "hp": hp, "max_hp": max_hp, "xp": xp, "level": level, "gold": gold, "honor": honor, "boss_done": boss_done}
+	var data := {"schema": 1, "area": int(area), "x": player.x, "hp": hp, "max_hp": max_hp, "xp": xp, "level": level, "gold": gold, "honor": honor, "boss_done": boss_done, "mika_spoken": mika_spoken}
 	var f := FileAccess.open(SAVE + ".tmp", FileAccess.WRITE)
 	if f == null: return
 	f.store_string(JSON.stringify(data))
 	f.close()
-	DirAccess.rename_absolute(SAVE + ".tmp", SAVE)
+	var source := ProjectSettings.globalize_path(SAVE + ".tmp")
+	var target := ProjectSettings.globalize_path(SAVE)
+	var err := DirAccess.rename_absolute(source, target)
+	if err == OK:
+		save_exists = true
+	else:
+		push_error("No se pudo confirmar el guardado: %s" % error_string(err))
 
 func _continue_game() -> void:
 	if not save_exists:
@@ -340,6 +353,7 @@ func _load_save() -> void:
 	gold = maxi(0, int(d.get("gold", 0)))
 	honor = clampi(int(d.get("honor", 0)), -100, 100)
 	boss_done = bool(d.get("boss_done", false))
+	mika_spoken = bool(d.get("mika_spoken", false))
 	if boss_done: mode = Mode.WIN
 
 func _draw() -> void:
@@ -443,6 +457,7 @@ func _draw_hud() -> void:
 func _draw_controls() -> void:
 	_button(Rect2(8,204,48,28),"◀")
 	_button(Rect2(62,204,48,28),"▶")
+	_button(Rect2(220,204,58,28),"SAL")
 	_button(Rect2(286,204,48,28),"DEF")
 	_button(Rect2(338,204,48,28),"DOD")
 	_button(Rect2(390,204,40,28),"J")

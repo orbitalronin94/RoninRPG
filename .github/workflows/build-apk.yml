@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -96,7 +96,16 @@ jobs:
           echo "Java: $JAVA_HOME"
           test -x "$ANDROID_HOME/build-tools/34.0.0/apksigner"
           test -x "$ANDROID_HOME/build-tools/34.0.0/zipalign"
-          "$GODOT_BIN" --headless --verbose --path game --export-debug "Android" builds/ronin-rpg.apk
+          set +e
+          "$GODOT_BIN" --headless --verbose --path game --export-debug "Android" builds/ronin-rpg.apk 2>&1 | tee "$RUNNER_TEMP/godot-android-export.log"
+          export_status=${PIPESTATUS[0]}
+          set -e
+          if [ "$export_status" -ne 0 ]; then
+            echo "::group::Godot export diagnostics"
+            grep -Ein "error|failed|warning|gradle|keystore|sign|android|java|sdk" "$RUNNER_TEMP/godot-android-export.log" | tail -n 120 || true
+            echo "::endgroup::"
+            exit "$export_status"
+          fi
           test -s builds/ronin-rpg.apk
 
       - name: Upload APK artifact
