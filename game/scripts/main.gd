@@ -54,6 +54,9 @@ func _process(dt: float) -> void:
 		if tap == "jump":
 			_jump()
 			tap = ""
+		elif tap == "dodge":
+			_dodge()
+			tap = ""
 		_update_player(dt)
 		_update_attack(dt)
 		_update_enemy(dt)
@@ -85,7 +88,7 @@ func _input(event: InputEvent) -> void:
 		var a := _touch_action(event.position)
 		if a != "":
 			touch[event.index] = a
-			if a == "light" or a == "heavy" or a == "interact" or a == "jump":
+			if a == "light" or a == "heavy" or a == "interact" or a == "jump" or a == "dodge":
 				tap = a
 			elif a == "pause":
 				mode = Mode.PAUSE
@@ -136,7 +139,6 @@ func _update_player(dt: float) -> void:
 	var axis := 0.0
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT) or _down("left"): axis -= 1
 	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT) or _down("right"): axis += 1
-	if _down("dodge"): _dodge()
 	guard = Input.is_key_pressed(KEY_I) or _down("guard")
 	if dodge_clock > 0:
 		player.x += facing * 220 * dt

@@ -33,12 +33,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: "platform-tools platforms;android-34 build-tools;34.0.0"
+          packages: "platform-tools platforms;android-33 build-tools;33.0.2 cmake;3.10.2.4988404 ndk;23.2.8568313"
 
       - name: Create Android debug keystore
         run: |
           mkdir -p "$HOME/.android"
-          keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" -deststoretype pkcs12
 
       - name: Download Godot 4.2.2 and export templates
         shell: bash
@@ -92,11 +92,13 @@ jobs:
         run: |
           mkdir -p builds
           test -s "$HOME/.android/debug.keystore"
-          sed -i "s|keystore/debug=\"\"|keystore/debug=\"$HOME/.android/debug.keystore\"|" game/export_presets.cfg
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/.android/debug.keystore"
+          export GODOT_ANDROID_KEYSTORE_DEBUG_USER="androiddebugkey"
+          export GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android"
           echo "Android SDK: $ANDROID_HOME"
           echo "Java: $JAVA_HOME"
-          test -x "$ANDROID_HOME/build-tools/34.0.0/apksigner"
-          test -x "$ANDROID_HOME/build-tools/34.0.0/zipalign"
+          test -x "$ANDROID_HOME/build-tools/33.0.2/apksigner"
+          test -x "$ANDROID_HOME/build-tools/33.0.2/zipalign"
           set +e
           "$GODOT_BIN" --headless --verbose --path game --export-debug "Android" builds/ronin-rpg.apk 2>&1 | tee "$RUNNER_TEMP/godot-android-export.log"
           export_status=${PIPESTATUS[0]}
