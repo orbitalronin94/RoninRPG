@@ -98,6 +98,11 @@ Los valores de memoria, tamaño, FPS y tiempos son objetivos de ingeniería, no 
 
 ## 3. Mundo y narrativa
 
+### 3.0 Restricción de diálogo: kōan y haiku
+
+Todo texto pronunciado por cualquier personaje —jugable, NPC, aliado, enemigo o jefe— debe ser exclusivamente un **kōan** o un **haiku**. Queda prohibida la exposición en prosa conversacional. Los haikus se escribirán en tres versos, buscando el ritmo 5–7–5 adaptado al español sin sacrificar naturalidad; los kōan serán preguntas o paradojas breves, abiertas a interpretación. Esta regla alcanza escenas, diálogos opcionales, recuerdos, tutoriales narrados y todas las localizaciones. Los tutoriales y objetivos podrán usar texto directo solo si son elementos de interfaz claramente no hablados. La guía editorial y ejemplos canónicos están en `docs/NARRATIVE_BIBLE.md`.
+
+
 ### 3.1 Reglas del mundo
 
 - Los **sellos** mantienen separadas las corrientes humana y espiritual.

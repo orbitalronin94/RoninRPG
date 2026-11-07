@@ -275,13 +275,13 @@ func _level_up() -> void:
 func _interact() -> void:
 	if area == Area.VILLAGE:
 		if absf(player.x - 142) < 52:
-			dialogue = "Mika: El bosque devuelve una luz azul. Si oyes campanas, no respondas."
+			dialogue = "Mika · Haiku\nCampana sin voz\nla luna oye pasos\nno mires atrás"
 			if not mika_spoken:
 				honor += 1
 				mika_spoken = true
 				message = "Mika te entrega un talismán. Honor +1."
 			else:
-				message = "Mika: El bosque sigue esperando. No bajes la guardia."
+				dialogue = "Mika · Kōan\nSi el bosque guarda silencio,\n¿quién escucha tus pasos?"
 		elif player.x > 398:
 			area = Area.FOREST
 			player.x = 36
@@ -305,7 +305,7 @@ func _new_game() -> void:
 	boss_done = false
 	mika_spoken = false
 	enemy_alive = false
-	dialogue = "Akane: La emboscada no fue obra de bandidos. Alguien abrió el sello."
+	dialogue = "Akane · Kōan\nSi nadie abrió el sello,\n¿por qué mi espada recuerda\nla mano que la traicionó?"
 	message = "Habla con Mika y cruza al bosque de bambú."
 	mode = Mode.GAME
 	_save()
@@ -451,8 +451,10 @@ func _draw_hud() -> void:
 	draw_string(ThemeDB.fallback_font,Vector2(12,250),message,HORIZONTAL_ALIGNMENT_LEFT,450,8,Color("#f0dfbd"))
 	draw_string(ThemeDB.fallback_font,Vector2(12,261),"A/D mover · W saltar · J/K atacar · L esquivar · I cubrir · E interactuar",HORIZONTAL_ALIGNMENT_LEFT,450,7,Color("#c8c0ae"))
 	if dialogue != "":
-		draw_rect(Rect2(12,158,456,43),Color(0.03,0.04,0.06,0.94))
-		draw_string(ThemeDB.fallback_font,Vector2(20,177),dialogue,HORIZONTAL_ALIGNMENT_LEFT,440,8,Color("#f0dfbd"))
+		draw_rect(Rect2(12,151,456,50),Color(0.03,0.04,0.06,0.94))
+		var dialogue_lines := dialogue.split("\\n")
+		for i in range(dialogue_lines.size()):
+			draw_string(ThemeDB.fallback_font,Vector2(20,165 + i * 10),dialogue_lines[i],HORIZONTAL_ALIGNMENT_LEFT,440,8,Color("#f0dfbd"))
 
 func _draw_controls() -> void:
 	_button(Rect2(8,204,48,28),"◀")
