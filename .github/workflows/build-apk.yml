@@ -90,7 +90,7 @@ jobs:
           GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/.android/debug.keystore" \
           GODOT_ANDROID_KEYSTORE_DEBUG_USER="androiddebugkey" \
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android" \
-          "$GODOT_BIN" --headless --path game --export-debug "Android" builds/ronin-rpg.apk
+          "$GODOT_BIN" --headless --verbose --path game --export-debug "Android" builds/ronin-rpg.apk
           test -s builds/ronin-rpg.apk
 
       - name: Upload APK artifact
