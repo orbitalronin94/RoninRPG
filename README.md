@@ -1,26 +1,33 @@
-# Ronin RPG — El Sauce y la Ceniza
+# RONIN: SHADOW DOJO
 
-RPG narrativo 2D para Godot 4, ambientado en Kanegawa en 1573. El proyecto contiene una escena prototipo dibujada por código, un primer diálogo con O-Ren, movimiento, Honor y datos narrativos ampliados para una campaña ramificada.
+Action RPG 2D de fantasía japonesa, pixel art original y combate en tiempo real. Proyecto Android-first desarrollado con Godot 4. El objetivo inmediato es completar el vertical slice definido en [SPEC_V1.0.md](docs/SPEC_V1.0.md), checkpoints CP-00 a CP-18.
 
-## Estado del proyecto
-- Proyecto Godot en `game/`, con escena principal y controles de teclado.
-- Datos de mundo con 7 facciones y 9 zonas; 12 nodos de historia; 12 misiones principales y 8 secundarias.
-- Fichas de NPC, 10 encuentros yōkai, recetas de crafteo, estaciones/clima, combate, Honor y 6 finales definidos como datos.
-- Cinco auditores deterministas en `tools/agents/` y validador general en `tools/validate_json.py`.
-- Workflow de GitHub Actions en `.github/workflows/build-apk.yml` para intentar exportar APK, publicarlo como artefacto y copiarlo a `builds/ronin-rpg.apk`; los tags `v*` adjuntan el APK a una Release.
+## Identidad del juego
 
-**Importante:** la ampliación de datos no significa que todas las mecánicas estén ya implementadas en la interfaz jugable. El combate táctico, los sistemas de clima/crafteo, los seis finales completos, los assets originales de sprites/sonido y el diálogo LLM en runtime siguen siendo trabajo pendiente. El workflow está configurado, pero el APK solo se considera entregado cuando una ejecución de Actions termina correctamente y el archivo se verifica en un dispositivo/emulador.
+Akane, una ronin adulta traicionada por su clan, despierta con una katana ligada a un espíritu sellado. En un Japón fantástico donde el mundo humano y el espiritual se han mezclado, deberá sobrevivir a Yokai, descubrir quién rompió los sellos y decidir qué precio está dispuesta a pagar por el poder.
 
-## Ejecutar en escritorio
-1. Instala Godot 4.2.2 o una versión compatible.
+- Protagonistas y personajes principales femeninos.
+- Fantasía japonesa original; no usa personajes ni recursos de franquicias existentes.
+- Combate lateral en tiempo real: ataques, esquiva, guardia, habilidades y patrones enemigos.
+- Exploración de aldeas, bosques y santuarios.
+- Progresión RPG, misiones, equipo y guardado local.
+- Campaña offline; no necesita cuentas ni servidores.
+
+## Estado real
+
+La rama principal contiene la especificación v1.0, seis perfiles de agentes y la recuperación del prototipo Godot anterior. El prototipo recuperado pertenece a una dirección narrativa anterior (Kanegawa histórico y Kagetora) y **no es todavía el juego nuevo**. Se conservará selectivamente su arquitectura, validadores y datos técnicos; la identidad, protagonistas, mundo, arte y combate se están rehaciendo.
+
+Consulta [docs/RECOVERY_AUDIT.md](docs/RECOVERY_AUDIT.md) para la auditoría y [docs/STATUS.md](docs/STATUS.md) para el estado demostrable de checkpoints. No se declara ningún sistema funcional sin pruebas.
+
+## Abrir el proyecto
+
+1. Instala la versión Godot indicada en el workflow.
 2. Abre `game/project.godot`.
-3. Ejecuta con F6/F5 desde el editor.
+3. Ejecuta la escena principal con F6/F5.
 
-Controles iniciales: WASD o flechas para moverse; Espacio/Enter para avanzar diálogo; E para interactuar.
+## Validación
 
-## Validar datos
-Con Python 3:
-```sh
+```bash
 python tools/validate_json.py
 python tools/agents/world_agent.py
 python tools/agents/npc_agent.py
@@ -29,7 +36,20 @@ python tools/agents/mission_agent.py
 python tools/agents/scene_agent.py
 ```
 
-Los auditores revisan estructura y referencias; no simulan una partida ni sustituyen la ejecución de Godot.
+La validación de datos comprueba estructura y referencias; no demuestra por sí sola que el juego sea jugable. La validación del motor se realiza en GitHub Actions.
 
-## Android y releases
-Consulta [BUILD_APK.md](BUILD_APK.md). Para generar una Release, crea y sube un tag, por ejemplo `v0.1.0`, después de comprobar que el workflow de compilación funciona.
+## Android
+
+La exportación Android se realiza mediante [GitHub Actions](.github/workflows/build-apk.yml). Los APK de CI son builds de depuración para pruebas, no releases comerciales. No se considera entregado un APK hasta que el workflow finalice correctamente y el paquete se instale y pruebe en un dispositivo Android real.
+
+## Documentación
+
+- [Especificación de producto v1.0](docs/SPEC_V1.0.md)
+- [Estado y checkpoints](docs/STATUS.md)
+- [Auditoría de recuperación](docs/RECOVERY_AUDIT.md)
+- [Arquitectura](docs/architecture.md)
+- [Biblia visual](docs/ART_BIBLE.md)
+- [Biblia narrativa](docs/NARRATIVE_BIBLE.md)
+- [Matriz QA](docs/QA_MATRIX.md)
+- [Build Android](BUILD_APK.md)
+- [Registro de assets](ASSETS.md)
