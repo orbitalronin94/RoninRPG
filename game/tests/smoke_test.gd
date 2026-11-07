@@ -31,7 +31,7 @@ func _run() -> void:
 	game.call("_new_game")
 	_check(int(game.get("mode")) == 1, "new game enters gameplay")
 	_check(String(game.get("dialogue")).contains("Kōan"), "Akane speaks in a kōan")
-	_check(String(game.get("dialogue")).split("\\n").size() >= 3, "Akane dialogue is multiline")
+	_check(String(game.get("dialogue")).split("\n").size() >= 3, "Akane dialogue is multiline")
 
 	game.set("player", Vector2(142, 218))
 	game.call("_interact")
