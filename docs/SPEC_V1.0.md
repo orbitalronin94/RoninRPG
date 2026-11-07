@@ -678,9 +678,9 @@ Todos los checkpoints se inicializan como `NOT_STARTED`. CP-00 es el único trab
 
 | ID | Estado | Responsable inicial | Evidencia requerida |
 |---|---|---|---|
-| CP-00 | NOT_STARTED | Producer + QA | Inventario del repo |
-| CP-01 | NOT_STARTED | Producer | Matriz KEEP/REWRITE/ADAPT |
-| CP-02 | NOT_STARTED | Producer + Narrative | Docs base |
+| CP-00 | ACCEPTED | Producer + QA | `docs/RECOVERY_AUDIT.md`, commit `ea246ba` |
+| CP-01 | ACCEPTED | Producer | `docs/architecture.md`, ADR-001 y auditoría |
+| CP-02 | IN_PROGRESS | Producer + Narrative | README, ART_BIBLE, NARRATIVE_BIBLE, QA_MATRIX |
 | CP-03 | NOT_STARTED | QA/Release | CI baseline |
 | CP-04–42 | NOT_STARTED | Según dominio | Según checkpoint |
 
