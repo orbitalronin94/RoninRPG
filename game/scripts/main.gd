@@ -1,260 +1,437 @@
 extends Node2D
-## Prototipo jugable: movimiento, diálogos contextuales y decisiones persistentes en memoria.
-## Los sistemas narrativos se mantienen deterministas; no hay backend LLM conectado todavía.
+## Shadow Dojo prototype: side-view action combat with original procedural pixel art.
 
-const SPEED := 190.0
-const OREN_POS := Vector2(480, 190)
-const WELL_POS := Vector2(810, 330)
-const YASUKE_POS := Vector2(700, 190)
-const KIYOHIME_POS := Vector2(600, 300)
+const W := 480.0
+const H := 270.0
+const FLOOR := 218.0
+const SAVE := "user://shadow_dojo.json"
 
-var player_position := Vector2(480, 280)
+enum Mode { TITLE, GAME, PAUSE, WIN, LOSE }
+enum Area { VILLAGE, FOREST }
+
+var mode := Mode.TITLE
+var area := Area.VILLAGE
+var player := Vector2(82, FLOOR)
+var velocity := Vector2.ZERO
+var facing := 1
 var hp := 100
-var ki := 50
-var honor := 50
-var coins := 50
-var lodging_obtained := false
-var well_investigated := false
-var story_node := 1
-var choice_mode := false
-var dialogue_open := true
-var dialogue_index := 0
-var lines: Array[String] = [
-	"O-Ren: ¿Cuarto? Sí. Pago por adelantado. No fío a forasteros con espada.",
-	"Kagetora: No tengo monedas. Tengo una espada.",
-	"O-Ren: Una espada no llena el estómago. Limpia el establo y tendrás una sopa."
-]
-var status := "Objetivo: consigue alojamiento en El Sauce Llorón."
-var faction_values := {
-	"orden": 70,
-	"riqueza": 50,
-	"memoria": 30,
-	"fe": 40,
-	"artesania": 25,
-	"carbon": 25,
-	"pesca": 25
-}
-var decisions: Array[String] = []
+var max_hp := 100
+var xp := 0
+var level := 1
+var gold := 0
+var honor := 0
+var boss_done := false
+var enemy := ""
+var enemy_pos := Vector2(380, FLOOR)
+var enemy_hp := 0
+var enemy_max := 0
+var enemy_state := "approach"
+var enemy_clock := 0.0
+var enemy_alive := false
+var attack := ""
+var attack_clock := 0.0
+var attack_cd := 0.0
+var hit_done := false
+var dodge_clock := 0.0
+var dodge_cd := 0.0
+var invuln := 0.0
+var guard := false
+var flash := 0.0
+var message := "Habla con Mika y cruza al bosque de bambú."
+var dialogue := ""
+var touch := {}
+var tap := ""
 
 func _ready() -> void:
-	_load_progress()
+	get_window().title = "RONIN: SHADOW DOJO"
+	_load_save()
 
-func _process(delta: float) -> void:
-	if not dialogue_open:
-		player_position += Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down") * SPEED * delta
-		player_position.x = clampf(player_position.x, 24.0, 936.0)
-		player_position.y = clampf(player_position.y, 105.0, 430.0)
+func _process(dt: float) -> void:
+	flash = maxf(0, flash - dt)
+	if mode == Mode.GAME:
+		_update_player(dt)
+		_update_attack(dt)
+		_update_enemy(dt)
+		if tap == "interact":
+			_interact()
+		tap = ""
+	elif mode == Mode.TITLE and tap == "start":
+		_new_game()
+		tap = ""
+	elif mode == Mode.PAUSE and tap == "resume":
+		mode = Mode.GAME
+		tap = ""
 	queue_redraw()
 
-func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey) or not event.pressed or event.echo:
-		return
-	if choice_mode:
-		if event.is_action("ui_accept") and dialogue_index < lines.size() - 1:
-			dialogue_index += 1
-		elif dialogue_index >= lines.size() - 1 and event.keycode == KEY_1:
-			_resolve_choice(1)
-		elif dialogue_index >= lines.size() - 1 and event.keycode == KEY_2:
-			_resolve_choice(2)
-		elif dialogue_index >= lines.size() - 1 and event.keycode == KEY_3:
-			_resolve_choice(3)
-		queue_redraw()
-		return
-	if event.is_action("ui_accept"):
-		if dialogue_open:
-			if dialogue_index < lines.size() - 1:
-				dialogue_index += 1
-			else:
-				dialogue_open = false
-				status = "Explora la aldea. Acércate a los personajes y pulsa E."
-		queue_redraw()
-	elif event.keycode == KEY_E:
-		interact()
-
-func _show_dialogue(new_lines: Array[String], choices := false) -> void:
-	lines = new_lines
-	dialogue_index = 0
-	dialogue_open = true
-	choice_mode = choices
-	queue_redraw()
-
-func _resolve_choice(choice: int) -> void:
-	choice_mode = false
-	dialogue_open = false
-	if story_node == 2 and well_investigated:
-		if choice == 1:
-			_adjust_faction("orden", 10)
-			_adjust_faction("memoria", -10)
-			decisions.append("pozo:informar_clan")
-			status = "Informaste al clan. Orden +10, Memoria -10."
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		var a := _touch_action(event.position)
+		if event.pressed:
+			if a != "":
+				touch[event.index] = a
+				if a == "light" or a == "heavy" or a == "interact":
+					tap = a
+				elif a == "start":
+					tap = "start"
 		else:
-			_adjust_faction("memoria", 10)
-			_adjust_faction("orden", -10)
-			decisions.append("pozo:informar_aldeanos")
-			status = "Avisaste a los aldeanos. Memoria +10, Orden -10."
-		story_node = 3
-	elif story_node == 3:
-		if choice == 1:
-			_adjust_faction("fe", 5)
-			_adjust_faction("riqueza", -5)
-			decisions.append("carta:respetar_secreto")
-			status = "No abriste la carta. Fe +5, Riqueza -5."
+			touch.erase(event.index)
+	elif event is InputEventScreenDrag:
+		var a := _touch_action(event.position)
+		if a == "":
+			touch.erase(event.index)
 		else:
-			_adjust_faction("riqueza", 5)
-			_adjust_faction("fe", -5)
-			decisions.append("carta:abrir")
-			status = "Abriste la carta: Yasuke chantajea al clan. Riqueza +5, Fe -5."
-		story_node = 4
-	elif story_node >= 4:
-		if choice == 1:
-			_adjust_faction("fe", 5)
-			decisions.append("kiyohime:preguntar_santuario")
-			status = "Kiyohime habla de los sueños de un niño junto a un campo de arroz. Fe +5."
-		else:
-			decisions.append("kiyohime:guardar_silencio")
-			status = "Kiyohime guarda silencio. Algunas verdades necesitan tiempo."
-	_save_progress()
-	queue_redraw()
+			touch[event.index] = a
+	elif event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_ESCAPE:
+			if mode == Mode.GAME: mode = Mode.PAUSE
+			elif mode == Mode.PAUSE: mode = Mode.GAME
+			else: mode = Mode.TITLE
+		elif mode == Mode.TITLE and (event.keycode == KEY_ENTER or event.keycode == KEY_SPACE):
+			_new_game()
+		elif mode == Mode.PAUSE and event.keycode == KEY_ENTER:
+			mode = Mode.GAME
+		elif mode == Mode.GAME:
+			if event.keycode == KEY_J: tap = "light"
+			elif event.keycode == KEY_K: tap = "heavy"
+			elif event.keycode == KEY_L: _dodge()
+			elif event.keycode == KEY_W or event.keycode == KEY_SPACE: _jump()
+			elif event.keycode == KEY_E: tap = "interact"
 
-func _save_progress() -> void:
-	var state := {
-		"schema_version": 1,
-		"current_node": "nodo_%d" % story_node,
-		"honor": honor,
-		"coins": coins,
-		"faction_reputation": faction_values,
-		"lodging_obtained": lodging_obtained,
-		"well_investigated": well_investigated,
-		"decisions": decisions
-	}
-	var file := FileAccess.open("user://decisions.json", FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(state, "\\t"))
-		file.close()
+func _down(action: String) -> bool:
+	return touch.values().has(action)
 
-func _load_progress() -> void:
-	if not FileAccess.file_exists("user://decisions.json"):
-		return
-	var file := FileAccess.open("user://decisions.json", FileAccess.READ)
-	if file == null:
-		return
-	var parsed = JSON.parse_string(file.get_as_text())
-	file.close()
-	if typeof(parsed) != TYPE_DICTIONARY:
-		return
-	honor = clampi(int(parsed.get("honor", honor)), 0, 100)
-	coins = maxi(0, int(parsed.get("coins", coins)))
-	story_node = clampi(int(str(parsed.get("current_node", "nodo_1")).trim_prefix("nodo_")), 1, 12)
-	lodging_obtained = bool(parsed.get("lodging_obtained", false))
-	well_investigated = bool(parsed.get("well_investigated", false))
-	var saved_factions = parsed.get("faction_reputation", {})
-	if saved_factions is Dictionary:
-		for key in saved_factions:
-			if faction_values.has(key):
-				faction_values[key] = clampi(int(saved_factions[key]), 0, 100)
-	var saved_decisions = parsed.get("decisions", [])
-	if saved_decisions is Array:
-		for item in saved_decisions:
-			decisions.append(str(item))
-	status = "Partida cargada. Nodo %d · Honor %d." % [story_node, honor]
-	dialogue_open = false
-	choice_mode = false
+func _touch_action(p: Vector2) -> String:
+	if p.y < 200: return ""
+	if p.x < 62: return "left"
+	if p.x < 118: return "right"
+	if p.x > 414: return "light"
+	if p.x > 354: return "heavy"
+	if p.x > 294: return "dodge"
+	if p.x > 234: return "guard"
+	return "interact"
 
-func _adjust_faction(key: String, amount: int) -> void:
-	faction_values[key] = clampi(int(faction_values.get(key, 0)) + amount, 0, 100)
-
-func interact() -> void:
-	if dialogue_open:
-		return
-	if not lodging_obtained and player_position.distance_to(OREN_POS) < 140:
-		lodging_obtained = true
-		honor = clampi(honor + 5, 0, 100)
-		coins = maxi(0, coins - 10)
-		story_node = 2
-		decisions.append("oren:alojamiento_conseguido")
-		status = "Alojamiento conseguido. Honor +5. Investiga el pozo azul."
-		_save_progress()
-		_show_dialogue([
-			"O-Ren: La habitación es tuya por esta noche. No confundas necesidad con amistad.",
-			"Kagetora: No suelo confundirlas.",
-			"O-Ren: Entonces investiga el pozo. El agua sabe a metal y nadie escucha a los aldeanos."
-		])
-	elif lodging_obtained and not well_investigated and player_position.distance_to(WELL_POS) < 85:
-		well_investigated = true
-		story_node = 2
-		status = "El agua tiene un brillo extraño. Decide a quién informar."
-		_save_progress()
-		_show_dialogue([
-			"Kagetora: El agua brilla. No es barro. Huele a las minas.",
-			"Aldeano: El clan desvió el río. Ahora el pozo nos devuelve veneno.",
-			"¿A quién informar? 1: al clan (Orden+) · 2: a los aldeanos (Memoria+)"
-		], true)
-	elif story_node >= 3 and player_position.distance_to(YASUKE_POS) < 100:
-		_show_dialogue([
-			"Yasuke: Una carta sellada para Kiyohime. No la abras. En Kanegawa el silencio vale más que el arroz.",
-			"Kagetora: ¿Y qué compras con tanto silencio?",
-			"¿Qué haces? 1: respetar el secreto (Fe+) · 2: abrir la carta (Riqueza+)"
-		], true)
-	elif story_node >= 4 and player_position.distance_to(KIYOHIME_POS) < 100:
-		var line := "Kiyohime: El agua no recuerda a quién ha limpiado. Solo fluye."
-		if honor >= 60:
-			line = "Kiyohime: Has venido con polvo en las sandalias y ceniza en el corazón. ¿Qué buscas?"
-		elif honor < 30:
-			line = "Kiyohime: No todos los caminos llevan a la purificación. Algunos solo enseñan el peso de los pasos."
-		_show_dialogue([
-			line,
-			"Kagetora: ¿Has soñado con un niño junto al río?",
-			"1: preguntar por el santuario (Fe+) · 2: no insistir"
-		], true)
-	elif lodging_obtained and not well_investigated:
-		status = "Acércate al pozo azul y pulsa E."
+func _update_player(dt: float) -> void:
+	var axis := 0.0
+	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT) or _down("left"): axis -= 1
+	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT) or _down("right"): axis += 1
+	if _down("dodge"): _dodge()
+	guard = Input.is_key_pressed(KEY_I) or _down("guard")
+	if dodge_clock > 0:
+		player.x += facing * 220 * dt
+		dodge_clock = maxf(0, dodge_clock - dt)
+		invuln = maxf(invuln, 0.07)
 	else:
-		status = "Acércate a O-Ren, al pozo, a Yasuke o a Kiyohime y pulsa E."
+		player.x += axis * 118 * dt
+		if player.y < FLOOR:
+			velocity.y += 560 * dt
+			player.y += velocity.y * dt
+			if player.y >= FLOOR:
+				player.y = FLOOR
+				velocity.y = 0
+	if axis != 0: facing = 1 if axis > 0 else -1
+	player.x = clampf(player.x, 18, 462)
+	attack_cd = maxf(0, attack_cd - dt)
+	dodge_cd = maxf(0, dodge_cd - dt)
+	invuln = maxf(0, invuln - dt)
+
+func _jump() -> void:
+	if player.y >= FLOOR:
+		velocity.y = -205
+
+func _dodge() -> void:
+	if dodge_cd <= 0 and dodge_clock <= 0:
+		dodge_clock = 0.22
+		dodge_cd = 0.72
+		invuln = 0.25
+
+func _update_attack(dt: float) -> void:
+	if tap == "light" or tap == "heavy":
+		if attack_cd <= 0 and not guard:
+			attack = tap
+			attack_clock = 0.28 if tap == "light" else 0.43
+			attack_cd = 0.34 if tap == "light" else 0.58
+			hit_done = false
+		tap = ""
+	if attack_clock > 0:
+		attack_clock -= dt
+		if not hit_done and attack_clock <= (0.12 if attack == "light" else 0.19):
+			hit_done = true
+			_hit_enemy()
+		if attack_clock <= 0: attack = ""
+
+func _hit_enemy() -> void:
+	if not enemy_alive: return
+	var dx := enemy_pos.x - player.x
+	if absf(dx) > (66 if attack == "light" else 82) or signf(dx) != float(facing): return
+	var dmg := 18 if attack == "light" else 31
+	if enemy == "boss" and enemy_state != "recover": dmg = int(dmg * 0.72)
+	enemy_hp = maxi(0, enemy_hp - dmg)
+	flash = 0.12
+	if enemy_hp == 0: _enemy_defeated()
+	else:
+		enemy_state = "recover"
+		enemy_clock = 0.42
+
+func _spawn(kind: String) -> void:
+	enemy = kind
+	enemy_alive = true
+	enemy_pos = Vector2(380, FLOOR)
+	enemy_state = "approach"
+	if kind == "grunt":
+		enemy_hp = 48
+		message = "Yokai menor: observa su anticipación y contraataca."
+	elif kind == "archer":
+		enemy_hp = 42
+		message = "Yurei arquera: mantén la presión y evita su proyectil."
+	else:
+		enemy_hp = 170
+		message = "Jefa: Guardiana del Sello. Sus golpes son lentos y devastadores."
+	enemy_max = enemy_hp
+
+func _update_enemy(dt: float) -> void:
+	if not enemy_alive: return
+	if enemy_state == "recover":
+		enemy_clock -= dt
+		if enemy_clock <= 0: enemy_state = "approach"
+	elif enemy_state == "telegraph":
+		enemy_clock -= dt
+		if enemy_clock <= 0:
+			enemy_state = "strike"
+			enemy_clock = 0.16
+	elif enemy_state == "strike":
+		enemy_clock -= dt
+		if enemy_clock <= 0:
+			_enemy_strike()
+			enemy_state = "recover"
+			enemy_clock = 0.82 if enemy == "boss" else 0.68
+	else:
+		var dx := player.x - enemy_pos.x
+		var dist := absf(dx)
+		var reach := 118.0 if enemy == "archer" else (88.0 if enemy == "boss" else 74.0)
+		if dist > reach:
+			var speed := 34.0 if enemy == "archer" else (45.0 if enemy == "boss" else 56.0)
+			if enemy != "archer" or dist > 150: enemy_pos.x += signf(dx) * speed * dt
+		else:
+			enemy_state = "telegraph"
+			enemy_clock = 0.85 if enemy == "boss" else 0.68
+		enemy_pos.x = clampf(enemy_pos.x, 24, 456)
+
+func _enemy_strike() -> void:
+	var reach := 140.0 if enemy == "archer" else (94.0 if enemy == "boss" else 78.0)
+	if absf(player.x - enemy_pos.x) > reach or invuln > 0: return
+	var dmg := 9 if enemy == "archer" else (15 if enemy == "boss" else 12)
+	if guard and signf(enemy_pos.x - player.x) == float(facing): dmg = maxi(1, int(dmg * 0.25))
+	hp = maxi(0, hp - dmg)
+	flash = 0.18
+	if hp <= 0: mode = Mode.LOSE
+
+func _enemy_defeated() -> void:
+	enemy_alive = false
+	if enemy == "grunt":
+		xp += 25
+		gold += 8
+		_spawn("archer")
+	elif enemy == "archer":
+		xp += 35
+		gold += 12
+		_spawn("boss")
+	else:
+		xp += 100
+		gold += 40
+		honor += 10
+		boss_done = true
+		_level_up()
+		_save()
+		mode = Mode.WIN
+		message = "El sello ha sido purificado. La aldea está a salvo."
+
+func _level_up() -> void:
+	while xp >= level * 50:
+		xp -= level * 50
+		level += 1
+		max_hp += 8
+		hp = mini(max_hp, hp + 18)
+
+func _interact() -> void:
+	if area == Area.VILLAGE:
+		if absf(player.x - 142) < 52:
+			dialogue = "Mika: El bosque devuelve una luz azul. Si oyes campanas, no respondas."
+			honor += 1
+			message = "Mika te entrega un talismán. Honor +1."
+		elif player.x > 398:
+			area = Area.FOREST
+			player.x = 36
+			dialogue = ""
+			_spawn("grunt")
+			_save()
+		else: message = "Acércate a Mika o a la salida oriental."
+	else:
+		message = "El camino se abrirá cuando derrotes a la Guardiana."
+
+func _new_game() -> void:
+	area = Area.VILLAGE
+	player = Vector2(82, FLOOR)
+	velocity = Vector2.ZERO
+	hp = 100
+	max_hp = 100
+	xp = 0
+	level = 1
+	gold = 0
+	honor = 0
+	boss_done = false
+	enemy_alive = false
+	dialogue = "Akane: La emboscada no fue obra de bandidos. Alguien abrió el sello."
+	message = "Habla con Mika y cruza al bosque de bambú."
+	mode = Mode.GAME
+	_save()
+
+func _save() -> void:
+	var data := {"schema": 1, "area": int(area), "x": player.x, "hp": hp, "max_hp": max_hp, "xp": xp, "level": level, "gold": gold, "honor": honor, "boss_done": boss_done}
+	var f := FileAccess.open(SAVE + ".tmp", FileAccess.WRITE)
+	if f == null: return
+	f.store_string(JSON.stringify(data))
+	f.close()
+	DirAccess.rename_absolute(SAVE + ".tmp", SAVE)
+
+func _load_save() -> void:
+	if not FileAccess.file_exists(SAVE): return
+	var f := FileAccess.open(SAVE, FileAccess.READ)
+	if f == null: return
+	var d = JSON.parse_string(f.get_as_text())
+	f.close()
+	if not d is Dictionary or int(d.get("schema", 0)) != 1: return
+	area = Area.FOREST if int(d.get("area", 0)) == 1 else Area.VILLAGE
+	player.x = clampf(float(d.get("x", 82)), 18, 462)
+	hp = clampi(int(d.get("hp", 100)), 1, 300)
+	max_hp = clampi(int(d.get("max_hp", 100)), 1, 300)
+	xp = maxi(0, int(d.get("xp", 0)))
+	level = clampi(int(d.get("level", 1)), 1, 99)
+	gold = maxi(0, int(d.get("gold", 0)))
+	honor = clampi(int(d.get("honor", 0)), -100, 100)
+	boss_done = bool(d.get("boss_done", false))
+	if boss_done: mode = Mode.WIN
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, Vector2(960, 540)), Color("#263b32"))
-	draw_rect(Rect2(0, 180, 960, 180), Color("#8c7958"))
-	for x in range(0, 960, 48):
-		draw_line(Vector2(x, 180), Vector2(x, 360), Color("#9b8968"), 1.0)
-	for y in range(180, 360, 32):
-		draw_line(Vector2(0, y), Vector2(960, y), Color("#9b8968"), 1.0)
-	# Posada
-	draw_rect(Rect2(385, 105, 190, 110), Color("#d1b58b"))
-	draw_colored_polygon(PackedVector2Array([Vector2(365,112), Vector2(480,45), Vector2(595,112)]), Color("#633c32"))
-	draw_rect(Rect2(452,153,56,62), Color("#49362d"))
-	draw_string(ThemeDB.fallback_font, Vector2(400,98), "EL SAUCE LLORÓN", HORIZONTAL_ALIGNMENT_LEFT, 170, 13, Color("#f6e6c5"))
-	# Sauce y pozo
-	draw_rect(Rect2(155,95,18,120),Color("#514333"))
-	draw_circle(Vector2(163,86),52,Color("#476c4d"))
-	draw_circle(Vector2(126,105),30,Color("#476c4d"))
-	draw_circle(Vector2(197,105),32,Color("#476c4d"))
-	draw_circle(WELL_POS,37,Color("#b4a38a"))
-	draw_circle(WELL_POS,24,Color("#3e7e89"))
-	# NPCs: O-Ren, Yasuke y Kiyohime
-	_draw_person(OREN_POS, Color("#637c50"))
-	_draw_person(YASUKE_POS, Color("#887257"))
-	_draw_person(KIYOHIME_POS, Color("#f0e9d8"), Color("#a93232"))
-	# Kagetora
-	draw_circle(player_position + Vector2(0,-10),9,Color("#e0b18f"))
-	draw_rect(Rect2(player_position + Vector2(-8,0),Vector2(16,24)),Color("#354c70"))
-	draw_line(player_position + Vector2(8,8),player_position + Vector2(21,0),Color("#d8d8d0"),3)
-	# HUD
-	draw_rect(Rect2(14,12,420,96),Color(0.04,0.05,0.05,0.86))
-	draw_string(ThemeDB.fallback_font,Vector2(28,35),"KAGETORA | HP %d | KI %d | NODO %d" % [hp,ki,story_node],HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("#f0e5ce"))
-	draw_string(ThemeDB.fallback_font,Vector2(28,61),"HONOR %d/100 · MONEDAS %d" % [honor,coins],HORIZONTAL_ALIGNMENT_LEFT,-1,15,Color("#e4c77b"))
-	draw_string(ThemeDB.fallback_font,Vector2(28,87),"ORDEN %d · MEMORIA %d · FE %d" % [faction_values["orden"],faction_values["memoria"],faction_values["fe"]],HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("#b9c6bd"))
-	draw_rect(Rect2(14,445,932,80),Color(0.04,0.05,0.05,0.9))
-	draw_string(ThemeDB.fallback_font,Vector2(30,470),status,HORIZONTAL_ALIGNMENT_LEFT,895,16,Color("#f0e5ce"))
-	draw_string(ThemeDB.fallback_font,Vector2(30,500),"WASD/Flechas: moverse · E: interactuar · Espacio/Enter: continuar",HORIZONTAL_ALIGNMENT_LEFT,895,14,Color("#b9c6bd"))
-	if dialogue_open:
-		draw_rect(Rect2(24,335,912,98),Color(0.06,0.07,0.08,0.97))
-		draw_string(ThemeDB.fallback_font,Vector2(44,365),lines[clampi(dialogue_index,0,lines.size()-1)],HORIZONTAL_ALIGNMENT_LEFT,870,16,Color("#f0e5ce"))
-		if choice_mode:
-			draw_string(ThemeDB.fallback_font,Vector2(44,405),"Pulsa 1, 2 o 3 para elegir.",HORIZONTAL_ALIGNMENT_LEFT,870,14,Color("#e4c77b"))
-		else:
-			draw_string(ThemeDB.fallback_font,Vector2(44,405),"Espacio / Enter para continuar",HORIZONTAL_ALIGNMENT_LEFT,870,14,Color("#e4c77b"))
+	_draw_scene()
+	if mode == Mode.TITLE:
+		_draw_title()
+	elif mode == Mode.GAME or mode == Mode.PAUSE or mode == Mode.WIN or mode == Mode.LOSE:
+		_draw_actor(player, true)
+		if enemy_alive: _draw_enemy()
+		_draw_hud()
+		_draw_controls()
+		if mode == Mode.PAUSE: _overlay("PAUSA", "Esc / Enter para continuar")
+		elif mode == Mode.WIN: _overlay("SELLO PURIFICADO", "La aldea está a salvo · Esc para volver")
+		elif mode == Mode.LOSE: _overlay("DERROTA", "Akane volverá a intentarlo · Esc para volver")
 
-func _draw_person(pos: Vector2, robe: Color, accent: Color = Color(0.28, 0.22, 0.18)) -> void:
-	draw_circle(pos, 10, Color("#c5a083"))
-	draw_rect(Rect2(pos + Vector2(-11, 10), Vector2(22, 29)), robe)
-	draw_rect(Rect2(pos + Vector2(-11, 29), Vector2(22, 5)), accent)
+func _draw_scene() -> void:
+	if area == Area.VILLAGE:
+		draw_rect(Rect2(0,0,W,H), Color("#182b35"))
+		draw_rect(Rect2(0,112,W,158), Color("#344b3e"))
+		_draw_moon()
+		_draw_house(24,100)
+		_draw_house(360,105)
+		for x in range(0,480,42): _draw_tree(float(x),145)
+	else:
+		draw_rect(Rect2(0,0,W,H), Color("#101c2b"))
+		draw_rect(Rect2(0,130,W,140), Color("#1b352e"))
+		_draw_moon()
+		for x in range(-8,500,38): _draw_bamboo(float(x))
+		draw_rect(Rect2(220,168,42,42), Color("#493b4d"))
+		draw_rect(Rect2(230,158,22,10), Color("#8b555b"))
+	draw_rect(Rect2(0,FLOOR,W,H-FLOOR), Color("#514637"))
+	for x in range(0,480,16): draw_rect(Rect2(x,FLOOR,8,2), Color("#716044"))
+
+func _draw_moon() -> void:
+	draw_rect(Rect2(395,39,14,14), Color("#e5d8a7"))
+	draw_rect(Rect2(399,36,10,4), Color("#e5d8a7"))
+
+func _draw_house(x: float,y: float) -> void:
+	draw_rect(Rect2(x+12,y,54,58), Color("#b99a73"))
+	draw_rect(Rect2(x+5,y-5,68,7), Color("#6e4641"))
+	draw_rect(Rect2(x+22,y+26,8,32), Color("#3c2c2b"))
+	draw_rect(Rect2(x+47,y+26,8,32), Color("#3c2c2b"))
+
+func _draw_tree(x: float,y: float) -> void:
+	draw_rect(Rect2(x+8,y+12,6,34), Color("#4a382f"))
+	draw_rect(Rect2(x,y,22,18), Color("#345642"))
+	draw_rect(Rect2(x+5,y-6,18,12), Color("#456a4d"))
+
+func _draw_bamboo(x: float) -> void:
+	draw_rect(Rect2(x+10,70,4,82), Color("#557b53"))
+	draw_rect(Rect2(x+7,98,10,2), Color("#8eaa69"))
+	draw_rect(Rect2(x+10,128,9,2), Color("#8eaa69"))
+	draw_rect(Rect2(x-8,88,18,3), Color("#3e6548"))
+	draw_rect(Rect2(x+12,112,18,3), Color("#3e6548"))
+
+func _draw_actor(p: Vector2, is_player: bool) -> void:
+	var x := roundf(p.x)
+	var y := roundf(p.y)
+	var torso := Color("#344b70") if is_player else Color("#6f9a83")
+	if not is_player:
+		if enemy == "archer": torso = Color("#8b82a6")
+		elif enemy == "boss": torso = Color("#8f3e56")
+	if is_player and flash > 0: torso = Color("#d66a64")
+	if not is_player and flash > 0: torso = Color("#f0e1b9")
+	var scale := 1.0 if is_player or enemy != "boss" else 1.5
+	draw_rect(Rect2(x-8*scale,y-12*scale,7*scale,12*scale), Color("#272b39"))
+	draw_rect(Rect2(x+2*scale,y-12*scale,7*scale,12*scale), Color("#272b39"))
+	draw_rect(Rect2(x-10*scale,y-31*scale,20*scale,20*scale), torso)
+	draw_rect(Rect2(x-7*scale,y-44*scale,14*scale,12*scale), Color("#e5bd9b"))
+	draw_rect(Rect2(x-9*scale,y-48*scale,18*scale,5*scale), Color("#181a25"))
+	if is_player:
+		draw_rect(Rect2(x-11,y-47,5,3), Color("#b84c52"))
+		var sx := x + (12 if facing > 0 else -22)
+		draw_rect(Rect2(sx,y-27,18,2), Color("#d8d6c7"))
+	else:
+		draw_rect(Rect2(x-9*scale,y-52*scale,18*scale,3), Color("#bd9b59"))
+
+func _draw_enemy() -> void:
+	_draw_actor(enemy_pos, false)
+	if enemy_state == "telegraph":
+		draw_rect(Rect2(enemy_pos.x-17,enemy_pos.y-61,34,3), Color("#e4b65d"))
+
+func _draw_hud() -> void:
+	draw_rect(Rect2(6,6,164,39), Color(0.03,0.04,0.06,0.88))
+	draw_string(ThemeDB.fallback_font,Vector2(12,17),"AKANE Lv.%d" % level,HORIZONTAL_ALIGNMENT_LEFT,150,9,Color("#f0dfbd"))
+	draw_rect(Rect2(12,23,108,6),Color("#513b40"))
+	draw_rect(Rect2(12,23,108.0*float(hp)/float(max_hp),6),Color("#b84c52"))
+	draw_string(ThemeDB.fallback_font,Vector2(12,40),"XP %d  Oro %d" % [xp,gold],HORIZONTAL_ALIGNMENT_LEFT,150,8,Color("#d7bc7d"))
+	if enemy_alive:
+		var label := "YOKAI" if enemy == "grunt" else ("YUREI" if enemy == "archer" else "GUARDIANA DEL SELLO")
+		draw_string(ThemeDB.fallback_font,Vector2(250,17),label,HORIZONTAL_ALIGNMENT_CENTER,220,8,Color("#f0dfbd"))
+		draw_rect(Rect2(260,23,150,6),Color("#513b40"))
+		draw_rect(Rect2(260,23,150.0*float(enemy_hp)/float(enemy_max),6),Color("#a83f55"))
+	draw_rect(Rect2(6,238,468,26),Color(0.03,0.04,0.06,0.86))
+	draw_string(ThemeDB.fallback_font,Vector2(12,250),message,HORIZONTAL_ALIGNMENT_LEFT,450,8,Color("#f0dfbd"))
+	draw_string(ThemeDB.fallback_font,Vector2(12,261),"A/D mover · W saltar · J/K atacar · L esquivar · I cubrir · E interactuar",HORIZONTAL_ALIGNMENT_LEFT,450,7,Color("#c8c0ae"))
+	if dialogue != "":
+		draw_rect(Rect2(12,158,456,43),Color(0.03,0.04,0.06,0.94))
+		draw_string(ThemeDB.fallback_font,Vector2(20,177),dialogue,HORIZONTAL_ALIGNMENT_LEFT,440,8,Color("#f0dfbd"))
+
+func _draw_controls() -> void:
+	_button(Rect2(8,204,48,28),"◀")
+	_button(Rect2(62,204,48,28),"▶")
+	_button(Rect2(294,204,48,28),"DEF")
+	_button(Rect2(346,204,48,28),"DOD")
+	_button(Rect2(398,204,74,28),"ATACAR")
+	_button(Rect2(438,170,34,26),"E")
+
+func _button(r: Rect2,label: String) -> void:
+	draw_rect(r,Color(0.08,0.10,0.13,0.74))
+	draw_rect(Rect2(r.position,Vector2(r.size.x,2)),Color("#a88b5a"))
+	draw_string(ThemeDB.fallback_font,Vector2(r.position.x+2,r.position.y+17),label,HORIZONTAL_ALIGNMENT_CENTER,r.size.x-4,8,Color("#f2e5c8"))
+
+func _draw_title() -> void:
+	draw_rect(Rect2(0,0,W,H),Color(0.02,0.03,0.06,0.68))
+	draw_string(ThemeDB.fallback_font,Vector2(44,76),"RONIN",HORIZONTAL_ALIGNMENT_LEFT,390,30,Color("#f1dfb4"))
+	draw_string(ThemeDB.fallback_font,Vector2(46,99),"SHADOW DOJO",HORIZONTAL_ALIGNMENT_LEFT,390,16,Color("#c45b61"))
+	draw_string(ThemeDB.fallback_font,Vector2(46,132),"Una espada. Dos mundos. Ningun camino sin precio.",HORIZONTAL_ALIGNMENT_LEFT,390,9,Color("#e1d4b8"))
+	draw_rect(Rect2(145,164,190,34),Color("#6e353e"))
+	draw_string(ThemeDB.fallback_font,Vector2(160,186),"ENTER / TOCAR: COMENZAR",HORIZONTAL_ALIGNMENT_LEFT,170,9,Color("#fff0d1"))
+
+func _overlay(title: String,subtitle: String) -> void:
+	draw_rect(Rect2(62,83,356,102),Color(0.02,0.03,0.05,0.94))
+	draw_rect(Rect2(62,83,356,3),Color("#b28b59"))
+	draw_string(ThemeDB.fallback_font,Vector2(82,122),title,HORIZONTAL_ALIGNMENT_CENTER,316,17,Color("#f0dfbd"))
+	draw_string(ThemeDB.fallback_font,Vector2(82,151),subtitle,HORIZONTAL_ALIGNMENT_CENTER,316,9,Color("#d4bd8d"))
