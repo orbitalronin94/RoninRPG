@@ -50,6 +50,10 @@ jobs:
           curl -fL --retry 3 https://github.com/godotengine/godot/releases/download/4.2.2-stable/Godot_v4.2.2-stable_export_templates.tpz -o "$RUNNER_TEMP/godot/templates.tpz"
           unzip -q "$RUNNER_TEMP/godot/templates.tpz" -d "$RUNNER_TEMP/godot/templates"
           find "$RUNNER_TEMP/godot/templates" -type f -name 'android_*' -exec cp {} "$HOME/.local/share/godot/export_templates/4.2.2.stable/" \;
+          echo "Installed Android templates:"
+          ls -lh "$HOME/.local/share/godot/export_templates/4.2.2.stable/"
+          test -s "$HOME/.local/share/godot/export_templates/4.2.2.stable/android_debug.apk"
+          test -s "$HOME/.local/share/godot/export_templates/4.2.2.stable/android_release.apk"
           GODOT_BIN="$(find "$RUNNER_TEMP/godot" -maxdepth 1 -type f -name 'Godot_v4.2.2-stable_linux.x86_64' | head -n 1)"
           test -n "$GODOT_BIN"
           chmod +x "$GODOT_BIN"
@@ -87,9 +91,11 @@ jobs:
         run: |
           mkdir -p builds
           test -s "$HOME/.android/debug.keystore"
-          GODOT_ANDROID_KEYSTORE_DEBUG_PATH="$HOME/.android/debug.keystore" \
-          GODOT_ANDROID_KEYSTORE_DEBUG_USER="androiddebugkey" \
-          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android" \
+          sed -i "s|keystore/debug=\"\"|keystore/debug=\"$HOME/.android/debug.keystore\"|" game/export_presets.cfg
+          echo "Android SDK: $ANDROID_HOME"
+          echo "Java: $JAVA_HOME"
+          test -x "$ANDROID_HOME/build-tools/34.0.0/apksigner"
+          test -x "$ANDROID_HOME/build-tools/34.0.0/zipalign"
           "$GODOT_BIN" --headless --verbose --path game --export-debug "Android" builds/ronin-rpg.apk
           test -s builds/ronin-rpg.apk
 
